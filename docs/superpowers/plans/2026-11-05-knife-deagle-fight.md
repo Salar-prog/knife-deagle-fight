@@ -63,7 +63,7 @@ Everything except the vehicle layer and race mode is REDLINE's: arena,
 matcap rendering, Cannon physics, Socket.IO relay, pickups, respawn flow.
 ```
 
-Keep the quick-start/architecture/controls sections but: controls table becomes {WASD move, Shift sprint, Space jump, Mouse aim (pointer lock), LMB/F fire · 1/2/Q swap, Enter chat, R respawn, M mute}; remove race-mode sections and car screenshots/GIFs; keep `upstream` remote documented (`git fetch upstream`).
+Keep the quick-start/architecture/controls sections but: controls table becomes {WASD move, Shift sprint, Space jump, Mouse aim (pointer lock), LMB/F fire · 1/2/Q swap, Enter chat, M mute} — no R respawn (death auto-respawns after the 3 s countdown); remove race-mode sections and car screenshots/GIFs; keep `upstream` remote documented (`git fetch upstream`).
 
 - [ ] **Step 4: index.html title** → `<title>KNIFE DEAGLE FIGHT — Two-hit Deagle. Swing first.</title>`
 
@@ -356,7 +356,7 @@ CSS (`styles/redline.css`): `#crosshair` fixed center, 14px ring + 2px dot, redl
 
 - [ ] **Step 3: `Controls.js`** — add LMB fire: in `setKeyboard.keyDown` nothing needed (mouse handled by camera); add separate mousedown listener: if `document.pointerLockElement === renderer.domElement` on `mousedown` (button 0) → `this.trigger('action', ['fire'])`. Add `KeyQ` → `trigger('action', ['swap'])`. Widen wheel event (already used for zoom in camera — move wheel handler to `Controls`: wheel → `trigger('swap', [])` deltaY sign) — simplest: keep camera zoom wheel handler **deleted**, wheel now swaps weapons.
 
-- [ ] **Step 4: `ControlsOverlay.js`** — key list becomes `WASD MOVE · SHIFT SPRINT · SPACE JUMP · F FIRE · 1/2 WEAPON · R RESPAWN`.
+- [ ] **Step 4: `ControlsOverlay.js`** — key list becomes `WASD MOVE · SHIFT SPRINT · SPACE JUMP · F FIRE · 1/2 WEAPON`.
 
 - [ ] **Step 5: commit** — `git commit -m "Over-the-shoulder pointer-lock camera with crosshair and aim prompt"`
 
@@ -454,7 +454,7 @@ git rm -r remotion ecosystem.config.cjs
 
 - [ ] **Step 7: remotes** — replace `setRemoteCars` body with RemotePlayerManager equivalents (same room:joined/left/world:snapshot flow); `remoteCarManager` name → `remotePlayerManager` everywhere; drop `_setupBumpHandling` impulse flavor, keep `physics.foot.onBump = (targetId) => network.sendBump(targetId)` + `player:bumped` → shake + `carHit`.
 
-- [ ] **Step 8: `setPlayer`** (was setCar) — construct `new Player(...)`; `_setupYouLabel` stays (labels `.remote-player-label`/YOU above head — reuse); camera target each tick = player position + z 1.1 (already eased in Task 6 Camera rework — set `this.camera.target.set(p.x, p.y, p.z + 1.1)` in a new small tick inside `setPlayer`); **delete `_setupCameraEffects` FOV/steering look-ahead** (or reduce to static FOV — keep function minimal: no speed readout anymore). `_setupJump` → `controls.on('action','jump')` → `physics.foot.jump()` gated on grounded: `Math.abs(body.velocity.z) < 2`. **Reset (`R`)**: `controls.on('action', 'reset', ...)` was the car-recreate path deleted in Task 4 — re-add here as a teleport: `body.position.set(spawn.x, spawn.y, spawn.z ?? FOOT.spawnZ)` (spawn = `this._serverSpawnPos`), `body.velocity.set(0,0,0)`.
+- [ ] **Step 8: `setPlayer`** (was setCar) — construct `new Player(...)`; `_setupYouLabel` stays (labels `.remote-player-label`/YOU above head — reuse); camera target each tick = player position + z 1.1 (already eased in Task 6 Camera rework — set `this.camera.target.set(p.x, p.y, p.z + 1.1)` in a new small tick inside `setPlayer`); **delete `_setupCameraEffects` FOV/steering look-ahead** (or reduce to static FOV — keep function minimal: no speed readout anymore). `_setupJump` → `controls.on('action','jump')` → `physics.foot.jump()` gated on grounded: `Math.abs(body.velocity.z) < 2`. Do **not** re-add an R-respawn/teleport handler — manual respawn was removed from the project (death auto-respawns via HealthSystem's 3 s countdown).
 
 - [ ] **Step 9: `setCombat`** — rewire against Tasks 5–7:
   - `this.weapons = new Weapons({ scene, physics: this.physics, remotePlayerManager: this.remotePlayerManager, player: this.player, camera: this.camera, sounds: this.sounds, onHitCar: (id, dmg) => { this.network?.sendCombatDamage(id, dmg); (this._recentDamage ??= new Map()).set(id, Date.now()) }, onFire: () => this.sounds?.play('carHit', 10) })`
@@ -484,7 +484,9 @@ Checkpoint A: build green before proceeding.
 
 ---
 
-## Task 9: Controls polish + touch sanity
+## Task 9: Controls polish + touch sanity + R binding removal
+
+- [ ] **Step 0: remove the R→reset binding** — in `Controls.js` `setKeyboard()` `keyUp` handler, delete the `case 'KeyR': → trigger('action', ['reset'])` block. `git grep -n "'reset'\|KeyR"` must show nothing except unrelated uses; the death auto-respawn path (HealthSystem → World death handler) is the only respawn.
 
 - [ ] **Step 1:** verify touch fire button triggers `fire` (already wired), joystick maps to `up/right/down/left` (foot controller reads the same booleans — works), boost → sprint. Nothing to add.
 - [ ] **Step 2:** `Controls.js` visibilitychange reset already clears the same actions — no knife-specific keys get stuck.

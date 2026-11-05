@@ -78,8 +78,9 @@ Surgical fork & prune (approach A): delete aggressively, keep the working skelet
 | Fire / slash | LMB (alias `F`) |
 | Swap weapon | `1` Deagle · `2` Knife · `Q` toggle · wheel |
 | Chat | `Enter` |
-| Respawn | `R` |
 | Mute | UI button · `M` for sound toggle if already wired |
+
+No manual respawn key — death auto-respawns after the 3 s countdown; R is unbound.
 
 ## Server changes
 
@@ -134,3 +135,4 @@ LMB → raycast/arc check → hit? → network.sendCombatDamage(targetId, amount
 - No meteor shower; pickups + heal zone + speed pads kept
 - Client-trusted combat model kept; spawn-grid bug fixed opportunistically
 - Pointer lock mandatory for mouse aim; no keyboard-aim fallback ("Click to enable mouse aim")
+- Manual R respawn removed entirely — death auto-respawns after the 3 s countdown; R is unbound
