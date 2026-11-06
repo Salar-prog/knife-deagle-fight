@@ -12,6 +12,7 @@ export default class RemotePlayer
         this.name            = _options.name
         this.color           = _options.color ?? 0
         this.getPhysicsWorld = _options.getPhysicsWorld  // () => CANNON.World | null
+        this.network         = _options.network || null  // for server-time offset in retention check
 
         // Snapshot interpolation buffer
         this.snapshots          = []
@@ -67,16 +68,23 @@ export default class RemotePlayer
 
     addSnapshot(snapshot)
     {
+        // Relayed snapshots are unvalidated client data — drop malformed ones silently
+        const { t, pos, quat } = snapshot ?? {}
+        if(typeof t !== 'number' || !Number.isFinite(t)) return
+        if(!Array.isArray(pos) || pos.length !== 3 || !pos.every(Number.isFinite)) return
+        if(!Array.isArray(quat) || quat.length !== 4 || !quat.every(Number.isFinite)) return
+
         this.snapshots.push({
-            t:      snapshot.t,
-            pos:    snapshot.pos,
-            quat:   snapshot.quat,
-            vel:    snapshot.vel    || null,
-            angVel: snapshot.angVel || null,
+            t,
+            pos,
+            quat,
+            vel:    Array.isArray(snapshot.vel)    && snapshot.vel.length === 3    && snapshot.vel.every(Number.isFinite)    ? snapshot.vel    : null,
+            angVel: Array.isArray(snapshot.angVel) && snapshot.angVel.length === 3 && snapshot.angVel.every(Number.isFinite) ? snapshot.angVel : null,
         })
 
-        // Keep only last 3 seconds, but always retain at least the 2 newest
-        const cutoff = Date.now() - NETWORK.snapshotBufferTime
+        // Keep only last 3 seconds (server clock), but always retain at least the 2 newest
+        const now = Date.now() + (this.network?.serverTimeOffset || 0)
+        const cutoff = now - NETWORK.snapshotBufferTime
         while(this.snapshots.length > 2 && this.snapshots[0].t < cutoff)
         {
             this.snapshots.shift()
@@ -91,7 +99,8 @@ export default class RemotePlayer
 
         // Use server-time offset if available so all clients render the
         // same temporal slice (eliminates per-client clock drift)
-        const offset = network?.serverTimeOffset || 0
+        const net    = network ?? this.network
+        const offset = net?.serverTimeOffset || 0
         const renderTime = (Date.now() + offset) - this.interpolationDelay
 
         let older = null
@@ -157,6 +166,9 @@ export default class RemotePlayer
         {
             this._physicsBody.position.set(px, py, pz)
             this._physicsBody.quaternion.set(q.x, q.y, q.z, q.w)
+            // Static body — cannon 0.6.2 only recomputes the broadphase AABB
+            // when flagged, otherwise pairs never test against it after a teleport
+            this._physicsBody.aabbNeedsUpdate = true
         }
     }
 
@@ -203,6 +215,8 @@ export default class RemotePlayer
         {
             this._physicsBody.position.set(px, py, pz)
             this._physicsBody.quaternion.set(q1.x, q1.y, q1.z, q1.w)
+            // Static body — force broadphase AABB recompute after the teleport
+            this._physicsBody.aabbNeedsUpdate = true
         }
     }
 

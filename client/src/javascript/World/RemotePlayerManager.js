@@ -77,6 +77,7 @@ export default class RemotePlayerManager
             name,
             color,
             getPhysicsWorld: this.getPhysicsWorld,
+            network:         this.network,
         })
 
         this.players.set(id, player)
