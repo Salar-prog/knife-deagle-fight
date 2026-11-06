@@ -314,11 +314,11 @@ Imports at top: `import { FOOT } from '../../../shared/constants.js'`.
 
 **Files:** `client/src/javascript/Camera.js`, `client/src/index.html` (aim overlay), `client/src/styles/redline.css` (aim/crosshair styles)
 
-- [ ] **Step 1: rework `Camera.js`** — keep class shell. Replace `setPan` (disable; `pan.enabled = false`) and orbitControls (stays disabled) usage; add:
+- [ ] **Step 1: rework `Camera.js`** — keep class shell. Replace `setPan` (disable; `pan.enabled = false`) and orbitControls (stays disabled) usage; **delete the dead `setZoom()` method and any `zoom.*` references** (no readers after the wheel handler moves); add:
 
 ```js
 setAim() {
-  this.yaw = -Math.PI / 2         // face -Y (into arena center from south)
+  this.yaw = Math.PI / 2          // face +Y (into arena center from south spawn)
   this.pitch = 0.35               // slight downward tilt
   this.pitchMin = -0.2; this.pitchMax = 1.1
   this.sensitivity = 0.0023
@@ -342,7 +342,7 @@ setAim() {
 }
 ```
 
-`setInstance()` tick replacement: offset = `(cos yaw*cos pitch, sin yaw*cos pitch, sin pitch) * distance`; `instance.position.copy(targetEased).add(offset)`; `instance.lookAt(targetEased)` — z-up `up` stays `(0,0,1)`.
+`setInstance()` tick replacement: the view forward is `(cos yaw, sin yaw)` (matches Player movement in Task 5), so the camera sits BEHIND: `offset = (-cos yaw*cos pitch, -sin yaw*cos pitch, sin pitch) * distance`; `instance.position.copy(targetEased).add(offset)`; `instance.lookAt(targetEased)` — z-up `up` stays `(0,0,1)`. The offset is the negative of the view direction: Task 5 walks INTO the screen with W.
 
 - [ ] **Step 2: crosshair & aim prompt DOM** (append into `<body>` overlay area):
 
@@ -354,9 +354,9 @@ setAim() {
 
 CSS (`styles/redline.css`): `#crosshair` fixed center, 14px ring + 2px dot, redline `#FF2E4D`; `#hitmarker` center ✕, flashes 120 ms on `.flash`; `#aim-prompt` fixed center-bottom pill, semi-transparent, pointer-events none; `.hidden { display: none !important }`.
 
-- [ ] **Step 3: `Controls.js`** — add LMB fire: in `setKeyboard.keyDown` nothing needed (mouse handled by camera); add separate mousedown listener: if `document.pointerLockElement === renderer.domElement` on `mousedown` (button 0) → `this.trigger('action', ['fire'])`. Add `KeyQ` → `trigger('action', ['swap'])`. Widen wheel event (already used for zoom in camera — move wheel handler to `Controls`: wheel → `trigger('swap', [])` deltaY sign) — simplest: keep camera zoom wheel handler **deleted**, wheel now swaps weapons.
+- [ ] **Step 3: `Controls.js`** — add LMB fire: in `setKeyboard.keyDown` nothing needed (mouse handled by camera); add separate mousedown listener: if `document.pointerLockElement === renderer.domElement` on `mousedown` (button 0) → `this.trigger('action', ['fire'])`. Unify ALL weapon-swap input onto one bus `swap` with a payload, gated on pointer lock (same guard as LMB fire): `KeyQ` → `trigger('swap', [0])` (toggle), mousewheel → `trigger('swap', [deltaY > 0 ? 1 : -1])`, `Digit1` → `trigger('swap', ['deagle'])`, `Digit2` → `trigger('swap', ['knife'])`. Task 8 interprets the payload: `'deagle'`/`'knife'` → `weapons.select(payload)`; `±1` → step; `0` → `weapons.swap()`. The camera zoom wheel handler stays deleted. Scrolling menus/chat must not swap weapons.
 
-- [ ] **Step 4: `ControlsOverlay.js`** — key list becomes `WASD MOVE · SHIFT SPRINT · SPACE JUMP · F FIRE · 1/2 WEAPON`.
+- [ ] **Step 4: `ControlsOverlay.js`** — chips must include a `W A S D` chip with desc `MOVE`; full list: `WASD MOVE · SHIFT SPRINT · SPACE JUMP · F FIRE · 1/2 WEAPON (now bound to Digit1/Digit2) · Q/wheel swap` — every chip carries a desc label.
 
 - [ ] **Step 5: commit** — `git commit -m "Over-the-shoulder pointer-lock camera with crosshair and aim prompt"`
 
@@ -407,10 +407,10 @@ fire() {
   this.cooldownUntil = performance.now() + KNIFE.cooldownMs
   this._swing()                              // 200 ms gsap rotate of knife mesh on camera
   const me = this.playerPosition()            // local body position (x,y)
-  const yaw = this.camera.yaw                 // note: camera.yaw ≈ facing dir (forward from offset)
+  const yaw = this.camera.yaw                 // view forward = (cos yaw, sin yaw) — same angle Player uses
   for (const [id, rp] of this.remotes) {
     const p = rp.container.position
-    if (knifeArcHit({ origin: me, yaw: yaw + Math.PI, target: { x: p.x, y: p.y }, reach: KNIFE.reach, arc: KNIFE.arc })) {
+    if (knifeArcHit({ origin: me, yaw: yaw, target: { x: p.x, y: p.y }, reach: KNIFE.reach, arc: KNIFE.arc })) {
       this.onHitCar?.(id, KNIFE.damage)
       this._hitmarker()
     }
@@ -420,9 +420,9 @@ fire() {
 }
 ```
 
-(`yaw + Math.PI` because `camera.yaw` describes the *offset* direction, which is opposite the view forward — verify sign at runtime in Task 10 verification; flip if inverted.)
+View forward equals `(cos yaw, sin yaw)` — the same angle the movement code uses; the camera is placed BEHIND the player (offset = negated forward).
 
-- [ ] **Step 3: coordinator `Weapons.js`** — holds `deagle`, `knife`, `current='deagle'`, `ammo = DEAGLE.ammoStart` shared with Deagle; `fire()` delegates; `swap()` toggles; `1`/`2`/`Q`/wheel call `select`/`swap` (Task 8 wires `controls.on('action', 'swap')`); `getHUD()` returns `{ name: current.toUpperCase(), ammoLabel: current==='deagle' ? '×'+this.ammo : '∞' }`; keeps the class name `Weapons` so Task 8's `setCombat` edits stay local.
+- [ ] **Step 3: coordinator `Weapons.js`** — holds `deagle`, `knife`, `current='deagle'`, `ammo = DEAGLE.ammoStart` shared with Deagle; `fire()` delegates; `swap()` toggles; swaps arrive via `controls.on('swap', (payload) => ...)`: `'deagle'`/`'knife'` → `select(payload)`, `±1` → step, `0` → `swap()` (Task 8 wires); `getHUD()` returns `{ name: current.toUpperCase(), ammoLabel: current==='deagle' ? '×'+this.ammo : '∞' }`; keeps the class name `Weapons` so Task 8's `setCombat` edits stay local.
 
 - [ ] **Step 4: delete meteor spawn/update paths** (already deleted server-side in Task 3); remove `import Meteors` consumers in Task 8.
 
