@@ -1,33 +1,21 @@
-<div align="center">
+# KNIFE DEAGLE FIGHT
 
-# REDLINE
+> Two-hit Deagle. Swing first.
 
-> Race clean. Or wreck everything.
+A browser-based multiplayer on-foot knife + Deagle arena duel, forked from
+[REDLINE](https://github.com/victorgalvez56/redline) by **Victor Galvez**
+(foundation: Bruno Simon's folio-2019). MIT license — see LICENSE.
 
-A multiplayer 3D arcade racer with vehicular combat. Built with Three.js, Cannon.js, and Socket.IO.
-
-[**Play live →**](https://redline.victorgalvez.dev)
-
-![REDLINE gameplay preview](docs/preview.gif)
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-FF2E4D.svg)](LICENSE)
-![Three.js](https://img.shields.io/badge/Three.js-r164-000000?logo=three.js&logoColor=white)
-![Socket.IO](https://img.shields.io/badge/Socket.IO-4.7-010101?logo=socket.io&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-5.2-646CFF?logo=vite&logoColor=white)
-![Node](https://img.shields.io/badge/Node-≥18-339933?logo=node.js&logoColor=white)
-
-</div>
+Everything except the vehicle layer and race mode is REDLINE's: arena,
+matcap rendering, Cannon physics, Socket.IO relay, pickups, respawn flow.
 
 ---
 
 ## Overview
 
-REDLINE is a browser-based, real-time multiplayer arcade game with two modes:
+KNIFE DEAGLE FIGHT is a browser-based, real-time multiplayer on-foot arena duel: knife and Deagle, free-for-all in a dedicated 100×100 m skatepark-style arena — first to five kills wins. Ammo and health pickups, jump pads, a healing zone, and a server-driven meteor shower.
 
-- **🏁 Race** — five laps against the clock with sector splits, lap deltas, and a shared leaderboard. No weapons.
-- **💥 Combat** — first to five kills wins. Free-for-all in a dedicated 100×100 m skatepark-style arena: missiles, health and ammo pickups, jump pads, healing zones, boost lanes, and a server-driven meteor shower.
-
-The client renders matcap-shaded low-poly cars and obstacles in Three.js. The server is authoritative for matchmaking, snapshot relay, hit attribution, and environmental hazards. Both ends share a Cannon.js physics world for predictable bumper collisions.
+The client renders matcap-shaded low-poly environments in Three.js. The server is authoritative for matchmaking, snapshot relay, hit attribution, and environmental hazards. Both ends share a Cannon.js physics world for predictable movement and collisions.
 
 ## Tech stack
 
@@ -98,7 +86,7 @@ npm run build    # → client/dist/
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
-The server steps physics at 60 Hz and broadcasts world snapshots at 20 Hz. Each snapshot is the **client-reported state** (position, quaternion, velocity, wheel transforms) cached server-side and re-emitted to all peers. Remote cars on each client interpolate over a 80 ms render delay and fall back to velocity-based extrapolation when the buffer is empty.
+The server steps physics at 60 Hz and broadcasts world snapshots at 20 Hz. Each snapshot is the **client-reported state** (position, quaternion, velocity) cached server-side and re-emitted to all peers. Remote players on each client interpolate over a 80 ms render delay and fall back to velocity-based extrapolation when the buffer is empty.
 
 Round-trip pings double as a clock-sync mechanism: the server returns its own `Date.now()` in the ping callback; the client computes `(serverTime + RTT/2) - clientTime` and EMA-smooths the result so renders use a shared temporal reference, not the local clock.
 
@@ -135,41 +123,37 @@ Round-trip pings double as a clock-sync mechanism: the server returns its own `D
 └── ecosystem.config.cjs    # PM2 config (legacy)
 ```
 
-## Game modes
-
-### Race
-
-| Element | Detail |
-| --- | --- |
-| **Objective** | Best 5-lap time |
-| **Arena** | Procedural racetrack (Catmull-Rom centerline → outer/inner walls) |
-| **Tools** | Boost pads, sector checkpoints, lap timer, leaderboard |
-| **End condition** | After 5 laps, results overlay shows lap-by-lap with best lap highlighted in gold |
-
-### Combat
+## Game mode
 
 | Element | Detail |
 | --- | --- |
 | **Objective** | First to 5 kills |
 | **Arena** | 100×100 m skatepark: central plateau with 4 ramps, NE skate bowl, NW stairs deck, SE big kicker, SW spine, mixed low-poly trees, L-cover walls |
-| **Tools** | Homing missiles (F), ammo + health pickups, healing zone (south), 2 boost zones (east/west corridors), server-driven meteor shower (~140/min) |
-| **Kills** | Heuristic: a `combat:carDestroyed` event from a player you damaged within the last 1500 ms counts as your kill |
+| **Tools** | Deagle (two-hit kill) and knife melee, ammo + health pickups, healing zone (south), server-driven meteor shower (~140/min) |
+| **Kills** | Heuristic: a destruction event from a player you damaged within the last 1500 ms counts as your kill |
 
 ## Controls
 
 | Action | Keys |
 | --- | --- |
-| Drive | `WASD` / arrow keys |
-| Boost | `Shift` |
-| Brake | `X` (or `Ctrl`) |
-| **Jump** | `Space` |
-| Fire (Combat) | `F` |
-| Respawn | `R` |
-| Horn | `H` |
+| Move | `WASD` |
+| Sprint | `Shift` |
+| Jump | `Space` |
+| Aim (pointer lock) | `Mouse` |
+| Fire / attack | `LMB` / `F` |
+| Swap weapon (Deagle / knife) | `1` / `2` / `Q` |
 | Chat | `Enter` |
-| Mute | UI button |
+| Mute | `M` |
 
-A keyboard is currently required — touch controls are stubbed out but not wired up.
+A keyboard is currently required — touch controls are stubbed out but not wired up. Death auto-respawns after a 3 s countdown; there is no manual respawn.
+
+## Upstream
+
+This repo is a fork of [REDLINE](https://github.com/victorgalvez56/redline). The `upstream` remote points at the original:
+
+```bash
+git fetch upstream
+```
 
 ## Contributing
 
@@ -196,7 +180,7 @@ If you want to chip in but aren't sure where to start, the codebase has plenty o
 ### Conventions
 
 - **Commits**: imperative mood, present tense, no trailing period (`Add boost zone visual`, not `Added boost zone visual.`)
-- **Network events**: `colon:case` (e.g. `combat:missile`, `player:joined`)
+- **Network events**: `colon:case` (e.g. `combat:kill`, `player:joined`)
 - **Magic numbers**: lift them to module-level constants with a comment
 
 ## Acknowledgments

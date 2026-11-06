@@ -1,16 +1,19 @@
 {
-  "name": "redline",
+  "name": "knife-deagle-fight",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "REDLINE — multiplayer 3D arcade racer with vehicular combat. Three.js + Cannon.js + Socket.IO.",
-  "homepage": "https://redline.victorgalvez.dev",
+  "description": "Knife Deagle Fight — browser multiplayer knife+Deagle arena duel (fork of REDLINE). Three.js + Cannon.js + Socket.IO.",
+  "homepage": "",
   "repository": {
     "type": "git",
-    "url": "https://github.com/victorgalvez56/racing-game.git"
+    "url": "https://github.com/techforge-cli/knife-deagle-fight.git"
   },
   "license": "MIT",
   "author": "Victor Galvez <hello@victorgalvez.dev>",
+  "contributors": [
+    "Victor Galvez <hello@victorgalvez.dev>"
+  ],
   "scripts": {
     "dev": "concurrently --names \"client,server\" --prefix-colors \"cyan,yellow\" \"npm run dev --prefix client\" \"cd server && node src/index.js\"",
     "build": "npm run build --prefix client",
