@@ -3,7 +3,7 @@ export default class ControlsOverlay
     constructor()
     {
         this._used      = new Set()
-        this._required  = new Set(['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ShiftLeft', 'Space', 'KeyR'])
+        this._required  = new Set(['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ShiftLeft', 'Space', 'KeyF'])
         this._keyEls    = {}
         this._el        = null
         this._dismissed = false
@@ -67,14 +67,15 @@ export default class ControlsOverlay
         const sep = document.createElement('div')
         sep.style.cssText = 'width:1px;height:48px;background:rgba(255,255,255,0.08);flex-shrink:0;'
 
-        // Shift / Space / R column
+        // Shift / Space / F / 1-2 column — key list: WASD MOVE · SHIFT SPRINT · SPACE JUMP · F FIRE · 1/2 WEAPON
         const extras = document.createElement('div')
         extras.style.cssText = 'display:flex;flex-direction:column;gap:5px;'
 
         ;[
-            { code: 'ShiftLeft', label: 'Shift', desc: 'boost'    },
-            { code: 'Space',     label: 'Space', desc: 'brake'    },
-            { code: 'KeyR',      label: 'R',     desc: 'respawn'  },
+            { code: 'ShiftLeft', label: 'Shift', desc: 'sprint' },
+            { code: 'Space',     label: 'Space', desc: 'jump'   },
+            { code: 'KeyF',      label: 'F',     desc: 'fire'   },
+            { code: null,        label: '1 / 2', desc: 'weapon' },
         ].forEach(({ code, label, desc }) =>
         {
             const row = document.createElement('div')
@@ -92,7 +93,7 @@ export default class ControlsOverlay
             row.appendChild(k)
             row.appendChild(d)
             extras.appendChild(row)
-            this._keyEls[code] = k
+            if(code) this._keyEls[code] = k
         })
 
         this._el.appendChild(wasd)
@@ -130,8 +131,6 @@ export default class ControlsOverlay
             ArrowDown:   'KeyS',
             ArrowLeft:   'KeyA',
             ArrowRight:  'KeyD',
-            ControlLeft: 'Space',
-            ControlRight:'Space',
         }
         return map[code] || code
     }

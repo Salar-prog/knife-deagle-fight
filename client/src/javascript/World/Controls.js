@@ -19,6 +19,7 @@ export default class Controls extends EventEmitter
 
         this.setActions()
         this.setKeyboard()
+        this.setMouse()
 
         // Auto-init touch UI on touch-capable devices. The Application's
         // global touchstart handler used to do this on first tap, but that
@@ -133,6 +134,10 @@ export default class Controls extends EventEmitter
                 case 'KeyF':
                     this.trigger('action', ['fire'])
                     break
+
+                case 'KeyQ':
+                    this.trigger('action', ['swap'])
+                    break
             }
         }
 
@@ -185,6 +190,26 @@ export default class Controls extends EventEmitter
 
         document.addEventListener('keydown', this.keyboard.events.keyDown)
         document.addEventListener('keyup', this.keyboard.events.keyUp)
+    }
+
+    setMouse()
+    {
+        // renderer.domElement is the pointer-lock target; camera stores it as camera.renderer
+        const domElement = this.camera?.renderer?.domElement
+
+        // LMB fire — only while pointer locked (otherwise the click is for locking the mouse)
+        document.addEventListener('mousedown', (_event) =>
+        {
+            if(_event.button !== 0) return
+            if(document.pointerLockElement !== domElement) return
+            this.trigger('action', ['fire'])
+        })
+
+        // Wheel swaps weapons (deltaY sign picks direction); camera no longer zooms on wheel
+        document.addEventListener('wheel', (_event) =>
+        {
+            this.trigger('swap', [Math.sign(_event.deltaY) || 1])
+        }, { passive: true })
     }
 
     setTouch()
