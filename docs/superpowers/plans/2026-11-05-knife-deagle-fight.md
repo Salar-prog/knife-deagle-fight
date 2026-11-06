@@ -15,7 +15,7 @@
 ## Global Constraints
 
 - z-up world everywhere (`gravity (0,0,-13)`, yaw around Z, forward +X, ojects spawn at z≈0.85 for the foot capsule — never "fix" y-axis assumptions locally).
-- Capsule: cylinder axis along **Z** (cannon 0.6.2 `Cylinder` default axis is Z); radius 0.35 m, cylinder height 1.0 m, spheres at z = ±0.5 m, total height 1.7 m; body center spawn z = 0.85 m; `angularFactor = 0` (no tipping).
+- Capsule: cylinder axis along **Z** (cannon 0.6.2 `Cylinder` default axis is Z); radius 0.35 m, cylinder height 1.0 m, spheres at z = ±0.5 m, total height 1.7 m; body center spawn z = 0.85 m; `fixedRotation: true` (never tips — cannon 0.6.2 has no angularFactor).
 - Deagle: 50 HP/hit, 600 ms cooldown, no spread, no falloff, 10 start / 20 max ammo, pickups refill, **no reload**.
 - Knife: 35 HP, reach 2.1 m, 120° frontal arc, 250 ms cooldown, infinite ammo.
 - 100 HP · 3 s respawn, ammo resets to 10 · first to **5 kills** · kill attribution = local 1500 ms damage-recency heuristic (unchanged).
@@ -191,7 +191,7 @@ export class PlayerFoot {
     const r = FOOT.radius
     this.body = new CANNON.Body({ mass: FOOT.mass })
     this.body.allowSleep = false
-    this.body.angularFactor.set(0, 0, 0)               // never tips
+    this.body.fixedRotation = true                      // never tips (cannon 0.6.2 has no angularFactor)
     this.body.addShape(new CANNON.Cylinder(r, r, FOOT.cylinderHeight, 12)) // axis = Z (cannon default)
     this.body.addShape(new CANNON.Sphere(r), new CANNON.Vec3(0, 0,  FOOT.cylinderHeight / 2))
     this.body.addShape(new CANNON.Sphere(r), new CANNON.Vec3(0, 0, -FOOT.cylinderHeight / 2))
@@ -253,7 +253,7 @@ setFootPlayer() {
   this.foot = {}
   this.foot.body = new CANNON.Body({ mass: FOOT.mass, material: this.materials.items.foot })
   this.foot.body.allowSleep = false
-  this.foot.body.angularFactor.set(0, 0, 0)
+  this.foot.body.fixedRotation = true   // never tips
   this.foot.body.addShape(new CANNON.Cylinder(r, r, FOOT.cylinderHeight, 12))
   this.foot.body.addShape(new CANNON.Sphere(r), new CANNON.Vec3(0, 0,  FOOT.cylinderHeight / 2))
   this.foot.body.addShape(new CANNON.Sphere(r), new CANNON.Vec3(0, 0, -FOOT.cylinderHeight / 2))
