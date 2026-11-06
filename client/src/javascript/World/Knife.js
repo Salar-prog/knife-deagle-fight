@@ -79,6 +79,7 @@ export default class Knife
         const yaw = this.camera?.yaw ?? 0
         for(const [id, rp] of this.remotes)
         {
+            if(rp.container.visible === false) continue   // death-hide: invisible remotes take no damage
             const p = rp.container.position
             if(knifeArcHit({ origin: me, yaw: yaw, target: { x: p.x, y: p.y }, reach: KNIFE.reach, arc: KNIFE.arc }))
             {

@@ -90,13 +90,17 @@ export default class Deagle
         if(this.cooldownUntil > performance.now()) return false
         if(this.weapons && this.weapons.ammo <= 0) return false
 
+        const instance = this.camera?.instance
+        const target   = this.camera?.targetEased
+        if(!instance || !target) return false
+
+        const origin  = instance.getWorldPosition(new THREE.Vector3())
+        const forward = new THREE.Vector3().subVectors(target, origin)
+        if(forward.lengthSq() < 1e-6) return false   // zero-length ray — don't spend ammo on it
+        forward.normalize()
+
         if(this.weapons) this.weapons.ammo--
         this.cooldownUntil = performance.now() + DEAGLE.cooldownMs
-
-        const origin = this.camera.instance.getWorldPosition(new THREE.Vector3())
-        const forward = this.camera.targetEased
-            ? new THREE.Vector3().subVectors(this.camera.targetEased, origin).normalize()
-            : new THREE.Vector3(0, 0, -1).applyQuaternion(this.camera.instance.getWorldQuaternion(new THREE.Quaternion())).normalize()
 
         const ray = new THREE.Raycaster(origin, forward, 0, 120)
         const hit = this._hitscan(ray)
@@ -133,9 +137,10 @@ export default class Deagle
         })
         if(solids.length) hits.push(...ray.intersectObjects(solids, true))
 
-        // Remote players — tag each hit with the id from the Map key
+        // Remote players — tag each hit with the id from the Map key; hidden (death-hide) remotes take no damage
         for(const [id, rp] of this.remotes)
         {
+            if(rp.container.visible === false) continue
             for(const h of ray.intersectObject(rp.container, true))
             {
                 h.remotePlayerId = id
