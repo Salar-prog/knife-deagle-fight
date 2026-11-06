@@ -89,3 +89,24 @@ export const CAR_COLORS = [
   '#e91e63', // pink
   '#ffffff',  // white
 ]
+
+// Foot-player tuning (z-up world). Server and client must agree on values.
+export const FOOT = {
+  mass: 70,
+  radius: 0.35,
+  cylinderHeight: 1.0,   // 1.7 total with 2 spheres
+  height: 1.7,
+  spawnZ: 0.85,
+  runSpeed: 5,           // m/s
+  sprintMultiplier: 1.4, // Shift
+  jumpVelocity: 5,       // m/s +Z
+  spawnSlots: 4,
+}
+
+// South-side arena spawn slots (deterministic; replaces race SPAWN_GRID for combat)
+export const ARENA_SPAWN_GRID = [
+  { x: -6, y: -42 }, { x: 6, y: -42 }, { x: -18, y: -42 }, { x: 18, y: -42 },
+]
+
+export const DEAGLE = { damage: 50, cooldownMs: 600, ammoStart: 10, ammoMax: 20 }
+export const KNIFE  = { damage: 35, cooldownMs: 250, reach: 2.1, arc: Math.PI * (120 / 180) }
