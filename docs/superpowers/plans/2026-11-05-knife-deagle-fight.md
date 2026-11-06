@@ -422,7 +422,7 @@ fire() {
 
 View forward equals `(cos yaw, sin yaw)` — the same angle the movement code uses; the camera is placed BEHIND the player (offset = negated forward).
 
-- [ ] **Step 3: coordinator `Weapons.js`** — holds `deagle`, `knife`, `current='deagle'`, `ammo = DEAGLE.ammoStart` shared with Deagle; `fire()` delegates; `swap()` toggles; swaps arrive via `controls.on('swap', (payload) => ...)`: `'deagle'`/`'knife'` → `select(payload)`, `±1` → step, `0` → `swap()` (Task 8 wires); `getHUD()` returns `{ name: current.toUpperCase(), ammoLabel: current==='deagle' ? '×'+this.ammo : '∞' }`; keeps the class name `Weapons` so Task 8's `setCombat` edits stay local.
+- [ ] **Step 3: coordinator `Weapons.js`** — holds `deagle`, `knife`, `current='deagle'`, `ammo = DEAGLE.ammoStart` shared with Deagle; `fire()` delegates; `swap()` toggles; `step(direction)` moves `DEAGLE↔KNIFE` by `direction` (clamped, `±1`); `select(name)` sets `current` to `'deagle'|'knife'` (ignores invalid); swaps arrive via `controls.on('swap', (payload) => …)`: `'deagle'`/`'knife'` → `select(payload)`, `±1` → `step(payload)`, `0` → `swap()` (Task 8 wires); `getHUD()` returns `{ name: current.toUpperCase(), ammoLabel: current==='deagle' ? '×'+this.ammo : '∞' }`; keeps the class name `Weapons` so Task 8's `setCombat` edits stay local.
 
 - [ ] **Step 4: delete meteor spawn/update paths** (already deleted server-side in Task 3); remove `import Meteors` consumers in Task 8.
 
@@ -459,7 +459,7 @@ git rm -r remotion ecosystem.config.cjs
 - [ ] **Step 9: `setCombat`** — rewire against Tasks 5–7:
   - `this.weapons = new Weapons({ scene, physics: this.physics, remotePlayerManager: this.remotePlayerManager, player: this.player, camera: this.camera, sounds: this.sounds, onHitCar: (id, dmg) => { this.network?.sendCombatDamage(id, dmg); (this._recentDamage ??= new Map()).set(id, Date.now()) }, onFire: () => this.sounds?.play('carHit', 10) })`
   - `controls.on('action', 'fire')` → `weapons.fire()`; `NO AMMO` toast on false return stays.
-  - `controls.on('action', 'swap')` → `weapons.swap()` then `_updateCombatHUD()`.
+  - `controls.on('swap', (payload) => { payload === 'deagle' || payload === 'knife' ? weapons.select(payload) : payload === 0 ? weapons.swap() : weapons.step(payload) })` then `_updateCombatHUD()`. (Unified swap bus from Task 6 — never `action`.)
   - **Network.js (`client/src/javascript/Network.js`)**: rename `sendCarDestroyed(...)` → `sendPlayerDown(x, y, z, vx, vy, color)` emitting `combat:playerDown`; rename the `combat:carDestroyed` socket listener → `combat:playerDown`; delete `sendMissileFired`, `sendExplosion`, the `combat:missile`/`combat:explosion`/`combat:meteor` senders/listeners entirely.
   - `_updateCombatHUD()`: `#hp-fill/#hp-val` as before; `#weapon-ammo` = `weapons.getHUD().ammoLabel`; `#weapon-name` (new span in #weapon-status — Task 8 index.html edit) = `DEAGLE`/`KNIFE`.
   - `GOT AMMO pickup` unchanged → `weapons.addAmmo(value)`.
