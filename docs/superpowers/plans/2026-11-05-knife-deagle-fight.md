@@ -82,7 +82,7 @@ git add -A && git commit -m "Rebrand fork as Knife Deagle Fight, add gitignore"
 - Create: `shared/combat.js` (pure, dependency-free)
 - Create: `tests/combat.test.mjs`
 - Modify: `shared/constants.js` (append `FOOT`, `ARENA_SPAWN_GRID`, export stays backward compatible)
-- Test: `node --test tests/`
+- Test: `node --test`
 
 **Interfaces (later tasks consume these exact names):**
 - `pickSpawnSlotIndex(usedIndexes: Set<number>, count: number): number` — lowest free index; wraps modulo `count` when full.
@@ -160,7 +160,7 @@ test('knife arc misses behind and out of reach', () => {
 
 - [ ] **Step 4: run tests**
 
-Run: `node --test tests/`
+Run: `node --test`
 Expected: PASS (3 tests)
 
 - [ ] **Step 5: commit**
