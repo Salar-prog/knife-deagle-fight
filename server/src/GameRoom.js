@@ -1,6 +1,6 @@
-import CANNON from 'cannon'
 import { PhysicsWorld } from './PhysicsWorld.js'
-import { NETWORK, SPAWN_GRID } from '../../shared/constants.js'
+import { NETWORK, ARENA_SPAWN_GRID, FOOT } from '../../shared/constants.js'
+import { pickSpawnSlotIndex } from '../../shared/combat.js'
 
 const { tickRate, physicsRate, maxPlayers } = NETWORK
 
@@ -8,31 +8,11 @@ export class GameRoom {
   constructor(io) {
     this.io      = io
     this.physics = new PhysicsWorld()
-    this.players = new Map() // socketId → { id, name, carColor, actions }
+    this.players = new Map() // socketId → { id, name, carColor, carType, actions, spawnIndex, spawnXY }
+    this._spawnSlots = new Set()
 
     this._startLoop()
     this._setupSocketEvents()
-    this._startMeteorShower()
-  }
-
-  // Server-driven meteor shower so all players see the same impacts.
-  // Skips emit when nobody is connected to save bandwidth.
-  _startMeteorShower() {
-    const SPAWN_RANGE = 38
-    const tick = () => {
-      const delay = 250 + Math.random() * 350   // 250–600ms (avg ~425ms)
-      setTimeout(() => {
-        if (this.players.size > 0) {
-          this.io.emit('combat:meteor', {
-            x: (Math.random() - 0.5) * SPAWN_RANGE * 2,
-            y: (Math.random() - 0.5) * SPAWN_RANGE * 2,
-            t: Date.now(),
-          })
-        }
-        tick()
-      }, delay)
-    }
-    tick()
   }
 
   _setupSocketEvents() {
@@ -53,7 +33,7 @@ export class GameRoom {
 
       socket.on('player:join', ({ name, carColor, carType }) => {
         const spawnPos = this._getSpawnPosition()
-        this.physics.addCar(socket.id, spawnPos)
+        this.physics.addPlayer(socket.id, spawnPos)
 
         this.players.set(socket.id, {
           id:       socket.id,
@@ -61,6 +41,7 @@ export class GameRoom {
           carColor: carColor ?? 0,
           carType:  carType || 'default',
           actions:  { up: false, down: false, left: false, right: false, brake: false, boost: false },
+          spawnIndex: spawnPos.index,
           spawnXY:  { x: spawnPos.x, y: spawnPos.y },
         })
 
@@ -69,8 +50,8 @@ export class GameRoom {
           .filter(p => p.id !== socket.id)
           .map(({ id, name, carColor, carType }) => ({ id, name, carColor, carType }))
 
-        // Include spawn position so client can initialise the local car at the same spot
-        socket.emit('room:joined', { id: socket.id, existingPlayers, spawnPos: { x: spawnPos.x, y: spawnPos.y } })
+        // Include spawn position so client can initialise the local player at the same spot
+        socket.emit('room:joined', { id: socket.id, existingPlayers, spawnPos: { x: spawnPos.x, y: spawnPos.y, z: FOOT.spawnZ, index: spawnPos.index } })
 
         // Notify everyone else
         socket.broadcast.emit('player:joined', {
@@ -84,16 +65,16 @@ export class GameRoom {
       })
 
       socket.on('player:ready', () => {
-        // Client reveal animation just started — reset server car to spawn z=12 so both fall together
-        const car    = this.physics.cars.get(socket.id)
-        const player = this.players.get(socket.id)
-        if (car && player) {
+        // Client reveal animation just started — reset server player to spawn so both fall together
+        const playerBody = this.physics.players.get(socket.id)
+        const player     = this.players.get(socket.id)
+        if (playerBody && player) {
           const { x, y } = player.spawnXY
-          car.chassis.position.set(x, y, 12)
-          car.chassis.velocity.set(0, 0, 0)
-          car.chassis.angularVelocity.set(0, 0, 0)
-          car.chassis.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), 0)
-          console.log(`[ready] ${player.name} — car reset to (${x.toFixed(2)}, ${y.toFixed(2)}, 12)`)
+          playerBody.body.position.set(x, y, FOOT.spawnZ)
+          playerBody.body.velocity.set(0, 0, 0)
+          playerBody.body.angularVelocity.set(0, 0, 0)
+          playerBody.body.quaternion.set(0, 0, 0, 1)
+          console.log(`[ready] ${player.name} — player reset to (${x.toFixed(2)}, ${y.toFixed(2)}, ${FOOT.spawnZ})`)
         }
       })
 
@@ -143,9 +124,9 @@ export class GameRoom {
         socket.broadcast.emit('combat:explosion', { fromId: socket.id, ...data })
       })
 
-      socket.on('combat:carDestroyed', (data) => {
-        console.log(`[combat] car destroyed: ${socket.id}`)
-        socket.broadcast.emit('combat:carDestroyed', { fromId: socket.id, ...data })
+      socket.on('combat:playerDown', (data) => {
+        console.log(`[combat] player down: ${socket.id}`)
+        socket.broadcast.emit('combat:playerDown', { fromId: socket.id, ...data })
       })
 
       socket.on('player:snapshot', (state) => {
@@ -157,8 +138,9 @@ export class GameRoom {
       })
 
       socket.on('disconnect', () => {
-        this.physics.removeCar(socket.id)
+        this.physics.removePlayer(socket.id)
         const player = this.players.get(socket.id)
+        if (player) this._spawnSlots.delete(player.spawnIndex)
         this.players.delete(socket.id)
         this.io.emit('player:left', { id: socket.id })
         console.log(`[-] ${player?.name ?? socket.id} — ${this.players.size} online`)
@@ -176,11 +158,6 @@ export class GameRoom {
       const now   = Date.now()
       const delta = (now - last) / 1000
       last = now
-
-      // Apply inputs
-      for (const [id, player] of this.players) {
-        this.physics.applyInputs(id, player.actions)
-      }
 
       // Step physics
       this.physics.step(delta)
@@ -204,9 +181,9 @@ export class GameRoom {
   }
 
   _getSpawnPosition() {
-    // Assign grid slot based on current player count (wraps if full)
-    const slot = this.players.size % SPAWN_GRID.length
-    const { x, y } = SPAWN_GRID[slot]
-    return { x, y, z: 12 }
+    const index = pickSpawnSlotIndex(this._spawnSlots, ARENA_SPAWN_GRID.length)
+    this._spawnSlots.add(index)
+    const { x, y } = ARENA_SPAWN_GRID[index]
+    return { x, y, z: FOOT.spawnZ, index }
   }
 }

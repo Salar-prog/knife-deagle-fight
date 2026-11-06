@@ -1,6 +1,6 @@
 import CANNON from 'cannon'
 import { PHYSICS } from '../../shared/constants.js'
-import { PlayerCar } from './PlayerCar.js'
+import { PlayerFoot } from './PlayerFoot.js'
 
 export class PhysicsWorld {
   constructor() {
@@ -14,7 +14,7 @@ export class PhysicsWorld {
     this.world.allowSleep = true
     this.world.defaultContactMaterial.restitution = PHYSICS.defaultRestitution
 
-    this.cars = new Map() // playerId → PlayerCar
+    this.players = new Map() // playerId → PlayerFoot
 
     this._setupFloor()
   }
@@ -25,34 +25,21 @@ export class PhysicsWorld {
     this.world.addBody(floorBody)
   }
 
-  addCar(playerId, spawnPosition) {
-    const car = new PlayerCar(this.world, spawnPosition)
-    this.cars.set(playerId, car)
-    return car
+  addPlayer(playerId, spawnPosition) {
+    const player = new PlayerFoot(this.world, spawnPosition)
+    this.players.set(playerId, player)
+    return player
   }
 
-  removeCar(playerId) {
-    const car = this.cars.get(playerId)
-    if (car) {
-      car.removeFromWorld(this.world)
-      this.cars.delete(playerId)
+  removePlayer(playerId) {
+    const player = this.players.get(playerId)
+    if (player) {
+      player.removeFromWorld(this.world)
+      this.players.delete(playerId)
     }
-  }
-
-  applyInputs(playerId, actions) {
-    const car = this.cars.get(playerId)
-    if (car) car.applyActions(actions)
   }
 
   step(delta) {
     this.world.step(1 / 60, delta, 3)
-  }
-
-  getSnapshot() {
-    const snapshot = []
-    for (const [id, car] of this.cars) {
-      snapshot.push({ id, ...car.getState() })
-    }
-    return snapshot
   }
 }
