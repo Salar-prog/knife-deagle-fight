@@ -45,37 +45,38 @@ export default class ControlsOverlay
             pointerEvents:  'none',
         })
 
-        // WASD cluster (2-row grid)
+        // W A S D chip + desc (same row style as the extras column)
         const wasd = document.createElement('div')
-        wasd.style.cssText = 'display:grid;grid-template-columns:repeat(3,28px);grid-template-rows:repeat(2,28px);gap:3px;'
+        wasd.style.cssText = 'display:flex;align-items:center;gap:8px;'
 
-        ;[
-            { code: 'KeyW', label: 'W', row: 1, col: 2 },
-            { code: 'KeyA', label: 'A', row: 2, col: 1 },
-            { code: 'KeyS', label: 'S', row: 2, col: 2 },
-            { code: 'KeyD', label: 'D', row: 2, col: 3 },
-        ].forEach(({ code, label, row, col }) =>
-        {
-            const k = this._makeKey(label)
-            k.style.gridRow    = row
-            k.style.gridColumn = col
-            wasd.appendChild(k)
-            this._keyEls[code] = k
-        })
+        const wasdKey = this._makeKey('W A S D')
+        wasdKey.style.width         = 'auto'
+        wasdKey.style.padding       = '0 10px'
+        wasdKey.style.minWidth      = '28px'
+        wasdKey.style.letterSpacing = '2px'
+
+        const wasdDesc = document.createElement('span')
+        wasdDesc.textContent   = 'move'
+        wasdDesc.style.cssText = 'color:rgba(255,255,255,0.3);font-size:10px;text-transform:uppercase;letter-spacing:1px;'
+
+        wasd.appendChild(wasdKey)
+        wasd.appendChild(wasdDesc)
+        ;['KeyW', 'KeyA', 'KeyS', 'KeyD'].forEach(code => { this._keyEls[code] = wasdKey })
 
         // Divider
         const sep = document.createElement('div')
         sep.style.cssText = 'width:1px;height:48px;background:rgba(255,255,255,0.08);flex-shrink:0;'
 
-        // Shift / Space / F / 1-2 column — key list: WASD MOVE · SHIFT SPRINT · SPACE JUMP · F FIRE · 1/2 WEAPON
+        // Shift / Space / F / 1-2 / Q+wheel column — WASD MOVE · SHIFT SPRINT · SPACE JUMP · F FIRE · 1/2 WEAPON · Q/WHEEL SWAP
         const extras = document.createElement('div')
         extras.style.cssText = 'display:flex;flex-direction:column;gap:5px;'
 
         ;[
-            { code: 'ShiftLeft', label: 'Shift', desc: 'sprint' },
-            { code: 'Space',     label: 'Space', desc: 'jump'   },
-            { code: 'KeyF',      label: 'F',     desc: 'fire'   },
-            { code: null,        label: '1 / 2', desc: 'weapon' },
+            { code: 'ShiftLeft', label: 'Shift',    desc: 'sprint' },
+            { code: 'Space',     label: 'Space',    desc: 'jump'   },
+            { code: 'KeyF',      label: 'F',        desc: 'fire'   },
+            { code: 'Digit1',    label: '1 / 2',    desc: 'weapon' },
+            { code: 'KeyQ',      label: 'Q / wheel', desc: 'swap'  },
         ].forEach(({ code, label, desc }) =>
         {
             const row = document.createElement('div')
@@ -127,6 +128,7 @@ export default class ControlsOverlay
     {
         const map = {
             ShiftRight:  'ShiftLeft',
+            Digit2:      'Digit1',
             ArrowUp:     'KeyW',
             ArrowDown:   'KeyS',
             ArrowLeft:   'KeyA',

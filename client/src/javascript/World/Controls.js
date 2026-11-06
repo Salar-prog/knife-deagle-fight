@@ -136,7 +136,15 @@ export default class Controls extends EventEmitter
                     break
 
                 case 'KeyQ':
-                    this.trigger('action', ['swap'])
+                    if(this._isPointerLocked()) this.trigger('swap', [0])
+                    break
+
+                case 'Digit1':
+                    if(this._isPointerLocked()) this.trigger('swap', ['deagle'])
+                    break
+
+                case 'Digit2':
+                    if(this._isPointerLocked()) this.trigger('swap', ['knife'])
                     break
             }
         }
@@ -192,9 +200,14 @@ export default class Controls extends EventEmitter
         document.addEventListener('keyup', this.keyboard.events.keyUp)
     }
 
+    // renderer.domElement is the pointer-lock target; camera stores it as camera.renderer
+    _isPointerLocked()
+    {
+        return document.pointerLockElement === this.camera?.renderer?.domElement
+    }
+
     setMouse()
     {
-        // renderer.domElement is the pointer-lock target; camera stores it as camera.renderer
         const domElement = this.camera?.renderer?.domElement
 
         // LMB fire — only while pointer locked (otherwise the click is for locking the mouse)
@@ -205,10 +218,11 @@ export default class Controls extends EventEmitter
             this.trigger('action', ['fire'])
         })
 
-        // Wheel swaps weapons (deltaY sign picks direction); camera no longer zooms on wheel
+        // Wheel swaps weapons — only while pointer locked, so menus/scrolling never swap
         document.addEventListener('wheel', (_event) =>
         {
-            this.trigger('swap', [Math.sign(_event.deltaY) || 1])
+            if(!this._isPointerLocked()) return
+            this.trigger('swap', [_event.deltaY > 0 ? 1 : -1])
         }, { passive: true })
     }
 

@@ -31,7 +31,6 @@ export default class Camera
         this.setAngle()
         this.setInstance()
         this.setAim()
-        this.setZoom()
         this.setPan()
         this.setOrbitControls()
     }
@@ -94,11 +93,11 @@ export default class Camera
             this.targetEased.y += (this.target.y - this.targetEased.y) * this.easing
             this.targetEased.z += (this.target.z - this.targetEased.z) * this.easing
 
-            // Over-the-shoulder offset; the view direction is opposite the offset
+            // Over-the-shoulder offset; the camera sits BEHIND: offset is the negative of the view forward (cos yaw, sin yaw)
             const cosPitch = Math.cos(this.pitch)
             const offset = new THREE.Vector3(
-                Math.cos(this.yaw) * cosPitch,
-                Math.sin(this.yaw) * cosPitch,
+                -Math.cos(this.yaw) * cosPitch,
+                -Math.sin(this.yaw) * cosPitch,
                 Math.sin(this.pitch)
             ).multiplyScalar(this.distance)
 
@@ -111,11 +110,11 @@ export default class Camera
 
     setAim()
     {
-        this.yaw = -Math.PI / 2         // face -Y (into arena center from south)
+        this.yaw = Math.PI / 2          // face +Y (into arena center from south spawn)
         this.pitch = 0.35               // slight downward tilt
         this.pitchMin = -0.2; this.pitchMax = 1.1
         this.sensitivity = 0.0023
-        this.distance = 4.2             // shoulder offset (replaces zoom default)
+        this.distance = 4.2             // shoulder offset
         document.addEventListener('mousemove', (e) => {
             if (document.pointerLockElement !== this.renderer.domElement) return
             this.yaw   -= e.movementX * this.sensitivity
@@ -132,15 +131,6 @@ export default class Camera
                 this.renderer.domElement.requestPointerLock()
             }
         })
-    }
-
-    setZoom()
-    {
-        // Zoom is a fixed shoulder offset now — click-drag pan/wheel-zoom are gone
-        // (wheel swaps weapons via Controls). Kept as a distance constant for compatibility.
-        this.zoom = {}
-        this.zoom.value = 0.5
-        this.zoom.distance = this.distance
     }
 
     setPan()
