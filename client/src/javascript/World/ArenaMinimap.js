@@ -223,7 +223,7 @@ export default class ArenaMinimap
         }
 
         // ── Local player (arrow) ───────────────────────────────────────────
-        const body = this.physics.foot?.body ?? this.physics.car?.chassis?.body
+        const body = this.physics.foot?.body
         if(body)
         {
             const lp = this._toCanvas(body.position.x, body.position.y)

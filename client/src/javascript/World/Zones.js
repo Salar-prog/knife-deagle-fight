@@ -37,7 +37,7 @@ export default class Zones
 
         this.time.on('tick', () =>
         {
-            const body = this.physics.foot?.body ?? this.physics.car?.chassis?.body
+            const body = this.physics.foot?.body
             this.tester.x = body?.position.x ?? 0
             this.tester.y = body?.position.y ?? 0
         })

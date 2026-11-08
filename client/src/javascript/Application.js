@@ -341,7 +341,8 @@ export default class Application
         {
             if(this.world && this.world.physics)
             {
-                this.title.absolutePosition += this.world.physics.car.forwardSpeed
+                const vel = this.world.physics.foot?.body?.velocity
+                this.title.absolutePosition += Math.hypot(vel?.x ?? 0, vel?.y ?? 0)
                 if(this.title.absolutePosition < 0) this.title.absolutePosition = 0
             }
         })
