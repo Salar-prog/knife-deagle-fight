@@ -11,6 +11,7 @@ npm install --prefix server # socket.io, express, cannon
 npm run dev                 # server :3001 (socket.io) + client :5173 (vite proxy)
 npm run build               # client production bundle (vite) — green-check without launching
 node --test                 # unit tests (tests/combat.test.mjs)
+docker build -t kdf .       # production image (serves client/dist on :3001)
 ```
 
 Node ≥ 18. `node --test tests/` fails on Node 24 (positional args are globs) — use
@@ -65,10 +66,30 @@ Canonical numbers (in `shared/constants.js`): HP 100 · respawn 3 s · first to 
 Deagle 50 HP / 600 ms / 10 start / 20 max (no reload) · Knife 35 HP / 250 ms / 2.1 m / 120°.
 Adjustments go in `shared/constants.js` only — client and server both import from there.
 
+## Deployment (infrastructure)
+
+- **Docker**: single image at repo root. `server/src/index.js` serves `client/dist` via
+  express when the build exists — one process, one port (3001); no separate static server
+  needed. The image publishes to `ghcr.io/salar-prog/knife-deagle-fight` via
+  `.github/workflows/docker.yml` on push to main/dev and `v*` tags.
+- **systemd / nginx**: examples in `deploy/` — unit file + nginx proxy with WebSocket
+  upgrade headers.
+- **GitHub Pages**: static site lives in `docs/` (source: `main:/docs`), live at
+  `https://salar-prog.github.io/knife-deagle-fight`. Anything in `docs/assets/` is
+  served as-is (videos, GIFs).
+- **Showcase video**: built with `/brag` (HyperFrames skill, installed globally). Outputs
+  land in `brag-output-*/` (plan, brief, `brag.mp4/gif/jpg`, share copy) plus the editable
+  Hyperframes project under that dir's `knife-deagle-fight/` subfolder. `docs/assets/`
+  holds the copies embedded in README and Pages. HyperFrames check/render needs Chrome
+  headless and ffmpeg/ffprobe on PATH.
+
 ## Testing
 
 - Unit: `node --test` → `tests/combat.test.mjs` (pure helpers: spawn picker, knife arc).
 - Build: `npm run build`.
+- Docker build: `docker build -t kdf .` then
+  `docker run -d -p 3002:3001 kdf` and `curl :3002/` (index) +
+  `curl :3002/socket.io/?EIO=4&transport=polling` (Socket.IO handshake).
 - Server smoke (socket.io-client script): two joins → distinct spawn slots; disconnect frees slot.
 - Browser feel is NOT verifiable headlessly (no WebGL/pointer-lock) — do a two-profile
   playtest (`npm run dev`) before calling something shipped.
