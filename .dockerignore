@@ -1,0 +1,14 @@
+node_modules
+client/node_modules
+server/node_modules
+client/dist
+.git
+.gitignore
+.github
+docs
+remotion
+deploy
+.superpowers
+*.log
+*.tar
+.DS_Store
