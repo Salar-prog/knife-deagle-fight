@@ -97,9 +97,9 @@ export const FOOT = {
   cylinderHeight: 1.0,   // 1.7 total with 2 spheres
   height: 1.7,
   spawnZ: 0.85,
-  runSpeed: 7.5,              // m/s (was 5 — felt like walking in a 100 m arena)
-  sprintMultiplier: 1.4, // Shift
-  jumpVelocity: 5,       // m/s +Z
+  runSpeed: 10,              // m/s (was 7.5 — sprint x1.5 ≈ 15, redline-car top speed was ~22; this keeps the duels snappy)
+  sprintMultiplier: 1.5,   // Shift (10 x 1.5 = 15 m/s)
+  jumpVelocity: 6.5,     // m/s +Z (was 5: ~0.96 m apex, 5.8 m hop @7.5 m/s → now ~1.6 m apex, ~10 m hop @10 m/s)
   spawnSlots: 4,
 }
 
