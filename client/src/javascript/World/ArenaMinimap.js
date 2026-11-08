@@ -59,9 +59,9 @@ export default class ArenaMinimap
 {
     constructor(_options)
     {
-        this.physics          = _options.physics
-        this.remoteCarManager = _options.remoteCarManager || null
-        this.localCarColor    = _options.localCarColor ?? 0
+        this.physics             = _options.physics
+        this.remotePlayerManager = _options.remotePlayerManager || null
+        this.localCarColor       = _options.localCarColor ?? 0
         this.pickups          = _options.pickups || []   // [{x, y, type}]
         this.hazards          = _options.hazards || []   // [{x, y, radius, type}]
 
@@ -206,29 +206,32 @@ export default class ArenaMinimap
         }
 
         // ── Remote players ─────────────────────────────────────────────────
-        if(this.remoteCarManager)
+        if(this.remotePlayerManager)
         {
-            for(const car of this.remoteCarManager.cars.values())
+            for(const player of this.remotePlayerManager.players.values())
             {
-                const pos = car.container.position
+                const pos = player.container.position
                 const c = this._toCanvas(pos.x, pos.y)
-                const color = DOT_COLORS[car.carColor % DOT_COLORS.length]
+                const color = DOT_COLORS[(player.color ?? 0) % DOT_COLORS.length]
                 this._drawDot(ctx, c.x, c.y, color, 4.5)
 
                 ctx.fillStyle = 'rgba(255,255,255,0.85)'
                 ctx.font = '9px "JetBrains Mono", monospace'
                 ctx.textAlign = 'center'
-                ctx.fillText(car.name || '?', c.x, c.y - 8)
+                ctx.fillText(player.name || '?', c.x, c.y - 8)
             }
         }
 
         // ── Local player (arrow) ───────────────────────────────────────────
-        const body = this.physics.car.chassis.body
-        const lp = this._toCanvas(body.position.x, body.position.y)
-        const q   = body.quaternion
-        const yaw = Math.atan2(2 * (q.w * q.z + q.x * q.y), 1 - 2 * (q.y * q.y + q.z * q.z))
-        const color = DOT_COLORS[this.localCarColor % DOT_COLORS.length]
-        this._drawArrow(ctx, lp.x, lp.y, -yaw + Math.PI / 2, color, 6)
+        const body = this.physics.foot?.body ?? this.physics.car?.chassis?.body
+        if(body)
+        {
+            const lp = this._toCanvas(body.position.x, body.position.y)
+            const q   = body.quaternion
+            const yaw = Math.atan2(2 * (q.w * q.z + q.x * q.y), 1 - 2 * (q.y * q.y + q.z * q.z))
+            const color = DOT_COLORS[this.localCarColor % DOT_COLORS.length]
+            this._drawArrow(ctx, lp.x, lp.y, -yaw + Math.PI / 2, color, 6)
+        }
 
         // ── Border ─────────────────────────────────────────────────────────
         ctx.strokeStyle = 'rgba(255,46,77,0.4)'

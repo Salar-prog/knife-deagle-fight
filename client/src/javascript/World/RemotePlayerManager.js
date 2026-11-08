@@ -8,6 +8,7 @@ export default class RemotePlayerManager
         this.network         = _options.network
         this.camera          = _options.camera
         this.sizes           = _options.sizes
+        this.resources       = _options.resources ?? null
         this.getPhysicsWorld = _options.getPhysicsWorld  // () => CANNON.World | null
 
         this.players = new Map()  // id → RemotePlayer
@@ -76,6 +77,7 @@ export default class RemotePlayerManager
             id,
             name,
             color,
+            resources:       this.resources,
             getPhysicsWorld: this.getPhysicsWorld,
             network:         this.network,
         })

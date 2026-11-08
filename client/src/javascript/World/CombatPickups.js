@@ -202,7 +202,8 @@ export default class CombatPickups
     {
         this._t += dt
         const now  = Date.now()
-        const body = this.physics.car.chassis.body
+        const body = this.physics.foot.body
+        if(!body) return
         const px   = body.position.x
         const py   = body.position.y
 

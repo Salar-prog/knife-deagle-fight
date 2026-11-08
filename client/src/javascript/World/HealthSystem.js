@@ -1,4 +1,5 @@
 import EventEmitter from '../Utils/EventEmitter.js'
+import { FOOT } from '../../../../shared/constants.js'
 
 const MAX_HP      = 100
 const RESPAWN_MS  = 3000
@@ -43,9 +44,9 @@ export default class HealthSystem extends EventEmitter
         this._dead = false
         this.hp    = MAX_HP
 
-        const body = this.physics.car.chassis.body
+        const body = this.physics.foot.body
         body.sleep()
-        body.position.set(this.spawnPos.x, this.spawnPos.y, 12)
+        body.position.set(this.spawnPos.x, this.spawnPos.y, this.spawnPos.z ?? FOOT.spawnZ)
         body.quaternion.set(0, 0, 0, 1)
         body.velocity.set(0, 0, 0)
         body.angularVelocity.set(0, 0, 0)

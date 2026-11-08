@@ -50,7 +50,7 @@ export default class Network extends EventEmitter
         {
             console.log('[network] room:joined — my id=', id, 'existing=', existingPlayers, 'spawnPos=', spawnPos)
             this.localId  = id
-            this.spawnPos = spawnPos   // { x, y } — used by World to position local car
+            this.spawnPos = spawnPos   // { x, y, z } — used by World to position local player
             this.trigger('room:joined', [{ id, existingPlayers, spawnPos }])
         })
 
@@ -76,7 +76,7 @@ export default class Network extends EventEmitter
             if(!this._snapshotLogged)
             {
                 this._snapshotLogged = true
-                console.log('[network] first world:snapshot — cars:', snapshot.cars?.length, snapshot.cars?.map(c => c.id))
+                console.log('[network] first world:snapshot — players:', snapshot.cars?.length, snapshot.cars?.map(c => c.id))
             }
             this.trigger('world:snapshot', [snapshot])
         })
@@ -91,33 +91,16 @@ export default class Network extends EventEmitter
             this.trigger('chat:message', [data])
         })
 
-        this.socket.on('combat:missile', (data) =>
-        {
-            console.log('[net] ← combat:missile received', data)
-            this.trigger('combat:missile', [data])
-        })
-
         this.socket.on('player:combatDamage', (data) =>
         {
             console.log('[net] ← player:combatDamage received', data)
             this.trigger('player:combatDamage', [data])
         })
 
-        this.socket.on('combat:explosion', (data) =>
+        this.socket.on('combat:playerDown', (data) =>
         {
-            console.log('[net] ← combat:explosion received', data)
-            this.trigger('combat:explosion', [data])
-        })
-
-        this.socket.on('combat:carDestroyed', (data) =>
-        {
-            console.log('[net] ← combat:carDestroyed received', data)
-            this.trigger('combat:carDestroyed', [data])
-        })
-
-        this.socket.on('combat:meteor', (data) =>
-        {
-            this.trigger('combat:meteor', [data])
+            console.log('[net] ← combat:playerDown received', data)
+            this.trigger('combat:playerDown', [data])
         })
 
         // Latency + clock-sync. Server returns its Date.now() in the ping
@@ -178,31 +161,20 @@ export default class Network extends EventEmitter
         this.socket.emit('chat:message', { text })
     }
 
-    sendMissileFired(x, y, z, dx, dy)
-    {
-        console.log('[net] → combat:missile sent', { x, y, z, dx, dy })
-        this.socket.emit('combat:missile', { x, y, z, dx, dy })
-    }
-
     sendCombatDamage(targetId, amount)
     {
         this.socket.emit('player:combatDamage', { targetId, amount })
     }
 
-    sendExplosion(x, y, z)
+    sendPlayerDown(x, y, z, vx, vy, color)
     {
-        this.socket.emit('combat:explosion', { x, y, z })
-    }
-
-    sendCarDestroyed(x, y, z, vx, vy, color)
-    {
-        this.socket.emit('combat:carDestroyed', { x, y, z, vx, vy, color })
+        this.socket.emit('combat:playerDown', { x, y, z, vx, vy, color })
     }
 
     playerReady()
     {
-        // Called when the local car wakes up (reveal.go setTimeout fires)
-        // Server resets its car to the same spawn position so both fall simultaneously
+        // Called when the local player wakes up (reveal.go setTimeout fires)
+        // Server resets to the same spawn position so both sides fall simultaneously
         this.socket.emit('player:ready')
     }
 

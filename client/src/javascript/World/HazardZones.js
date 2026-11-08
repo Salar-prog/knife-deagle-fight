@@ -154,7 +154,8 @@ export default class HazardZones
         this.scene.add(fill)
 
         this._zones.push({
-            type: 'boost',
+            type: 'speed',
+            speed: true,
             x, y, radiusSq: radius * radius,
             ring, fill,
         })
@@ -175,8 +176,8 @@ export default class HazardZones
             if(z.fill) z.fill.rotation.z -= dt * 0.0014
         }
 
-        // Effects only apply to the local car when it's near the ground
-        const body = this.physics?.car?.chassis?.body
+        // Effects only apply to the local player when it's near the ground
+        const body = this.physics?.foot?.body
         if(!body)
         {
             this._healAccum = 0
@@ -208,35 +209,13 @@ export default class HazardZones
             {
                 inHealing = true
             }
-            else if(z.type === 'boost')
+            else if(z.speed)
             {
                 inBoost = true
-                // Amplify motion — apply force in the car's velocity direction.
-                // If almost stopped, fall back to the car's facing direction.
-                const vx = body.velocity.x
-                const vy = body.velocity.y
-                const speed = Math.sqrt(vx * vx + vy * vy)
-
-                let ux, uy
-                if(speed > 1)
-                {
-                    ux = vx / speed
-                    uy = vy / speed
-                }
-                else
-                {
-                    const q  = body.quaternion
-                    const fx = 1 - 2 * (q.y * q.y + q.z * q.z)
-                    const fy = 2 * (q.x * q.y + q.z * q.w)
-                    const len = Math.sqrt(fx * fx + fy * fy) || 1
-                    ux = fx / len
-                    uy = fy / len
-                }
-
-                body.applyForce(
-                    new CANNON.Vec3(ux * BOOST_FORCE, uy * BOOST_FORCE, 0),
-                    body.position,
-                )
+                // Speed zone: while staying inside, scale horizontal velocity
+                // (never z) so the foot player surges forward on each tick.
+                body.velocity.x *= 1.6
+                body.velocity.y *= 1.6
             }
         }
 

@@ -11,6 +11,7 @@ export default class RemotePlayer
         this.id              = _options.id
         this.name            = _options.name
         this.color           = _options.color ?? 0
+        this.resources       = _options.resources ?? null
         this.getPhysicsWorld = _options.getPhysicsWorld  // () => CANNON.World | null
         this.network         = _options.network || null  // for server-time offset in retention check
 
@@ -27,7 +28,7 @@ export default class RemotePlayer
         this._visible = true
 
         // Same primitive human as the local player; feet at container origin
-        this.mesh = buildHumanMesh(this.color)
+        this.mesh = buildHumanMesh(this.color, this.resources)
         this.container.add(this.mesh)
 
         this._buildNameLabel()
