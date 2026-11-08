@@ -53,9 +53,10 @@ export default class Player
         const fwd    = (actions.up ? 1 : 0) - (actions.down ? 1 : 0)
         const strafe = (actions.right ? 1 : 0) - (actions.left ? 1 : 0)
 
-        // Camera-relative wish direction on the XY plane
-        let wishX = cos * fwd - sin * strafe
-        let wishY = sin * fwd + cos * strafe
+        // Right (strafe +1) must be the viewer's right in a z-up right-handed
+        // frame: (sin yaw, -cos yaw) — at yaw=π/2 forward=(0,1), right=(1,0).
+        let wishX = cos * fwd + sin * strafe
+        let wishY = sin * fwd - cos * strafe
         const len = Math.hypot(wishX, wishY)
         const moving = len > 0.0001
         if(moving)

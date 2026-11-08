@@ -97,7 +97,7 @@ export const FOOT = {
   cylinderHeight: 1.0,   // 1.7 total with 2 spheres
   height: 1.7,
   spawnZ: 0.85,
-  runSpeed: 5,           // m/s
+  runSpeed: 7.5,              // m/s (was 5 — felt like walking in a 100 m arena)
   sprintMultiplier: 1.4, // Shift
   jumpVelocity: 5,       // m/s +Z
   spawnSlots: 4,
