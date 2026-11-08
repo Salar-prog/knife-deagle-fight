@@ -189,10 +189,6 @@ export default class Controls extends EventEmitter
                     this.actions.boost = false
                     this._sendInput()
                     break
-
-                case 'KeyR':
-                    this.trigger('action', ['reset'])
-                    break
             }
         }
 

@@ -86,7 +86,6 @@ export default class World
         this._setupYouLabel()
 
         this.setEnvironment()
-        this._setupRespawnFeedback()
         this._setupMuteButton()
         this._setupCameraEffects()
         this._setupJump()
@@ -391,20 +390,6 @@ export default class World
         })
     }
 
-    _setupRespawnFeedback()
-    {
-        const $flash = document.getElementById('respawn-flash')
-
-        this.controls.on('action', (name) =>
-        {
-            if(name !== 'reset' || !$flash) return
-            $flash.style.animation = 'none'
-            void $flash.offsetWidth
-            $flash.style.animation = 'respawn-flash 0.5s ease-out forwards'
-            this._shakeCamera()
-        })
-    }
-
     // Space — foot jump, only fires when grounded (small vertical speed)
     _setupJump()
     {
@@ -500,6 +485,8 @@ export default class World
         this.controls.on('action', (name) =>
         {
             if(name !== 'fire') return
+            // Pointer-lock gate: F must not fire from lobby/menus/hover. Touch has no lock — allow when touch UI built.
+            if(document.pointerLockElement !== this.camera.renderer.domElement && !this.controls.touch) return
             const ok = this.weapons.fire()
             if(!ok && this.weapons.ammo <= 0)
                 this._showCombatPickup('NO AMMO', '#e74c3c')
