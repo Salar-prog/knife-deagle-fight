@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Knife Deagle Fight - Hyperframes</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Space Grotesk";
+        src: url("assets/fonts/space-grotesk-500.woff2") format("woff2");
+        font-weight: 500;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Space Grotesk";
+        src: url("assets/fonts/space-grotesk-700.woff2") format("woff2");
+        font-weight: 700;
+        font-display: swap;
+      }
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background-color: #08080f;
+        font-family: "Space Grotesk", sans-serif;
+      }
+
+      #main-composition {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+      }
+
+      .comp-layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="main-composition"
+      data-composition-id="main-video"
+      data-width="1920"
+      data-height="1080"
+      data-start="0"
+      data-duration="20.5"
+    >
+      <div id="hook-layer" class="comp-layer" data-track-kind="graphics" data-composition-id="hook" data-composition-src="compositions/hook.html" data-start="0" data-duration="3" data-track-index="1"></div>
+      <div id="arc-layer" class="comp-layer" data-track-kind="graphics" data-composition-id="arc" data-composition-src="compositions/arc.html" data-start="3" data-duration="4" data-track-index="1"></div>
+      <div id="arena-layer" class="comp-layer" data-track-kind="graphics" data-composition-id="arena" data-composition-src="compositions/arena.html" data-start="7" data-duration="5" data-track-index="1"></div>
+      <div id="duel-layer" class="comp-layer" data-track-kind="graphics" data-composition-id="duel" data-composition-src="compositions/duel.html" data-start="12" data-duration="5" data-track-index="1"></div>
+      <div id="outro-layer" class="comp-layer" data-track-kind="graphics" data-composition-id="outro" data-composition-src="compositions/outro.html" data-start="17" data-duration="3.5" data-track-index="1"></div>
+
+      <!-- Music bed -->
+      <audio id="music" data-start="0" data-duration="20.5" data-volume="0.35" src="composition/assets/music/track.mp3"></audio>
+      <!-- SFX: shot crack + ping ticks (scene 1) -->
+      <audio id="sfx-shot-1" data-start="0.3" data-duration="0.6" data-volume="0.8" src="composition/assets/sfx/impactPlate_heavy_000.ogg"></audio>
+      <audio id="sfx-tick-1" data-start="0.9" data-duration="0.4" data-volume="0.7" src="composition/assets/sfx/mouseclick1.ogg"></audio>
+      <audio id="sfx-tick-2" data-start="1.5" data-duration="0.4" data-volume="0.7" src="composition/assets/sfx/mouseclick1.ogg"></audio>
+      <!-- SFX: knife swish (scene 2) -->
+      <audio id="sfx-swish-1" data-start="3.6" data-duration="0.8" data-volume="0.8" src="composition/assets/sfx/rollover1.ogg"></audio>
+      <!-- SFX: duel (scene 4) — swap click, shot, ping, knife arc -->
+      <audio id="sfx-swap" data-start="12.2" data-duration="0.4" data-volume="0.8" src="composition/assets/sfx/switch1.ogg"></audio>
+      <audio id="sfx-shot-2" data-start="12.6" data-duration="0.6" data-volume="0.85" src="composition/assets/sfx/impactPlate_heavy_000.ogg"></audio>
+      <audio id="sfx-ping" data-start="13.0" data-duration="0.4" data-volume="0.75" src="composition/assets/sfx/mouseclick1.ogg"></audio>
+      <audio id="sfx-swish-2" data-start="15.4" data-duration="0.8" data-volume="0.8" src="composition/assets/sfx/rollover1.ogg"></audio>
+
+      <script>
+        const tl = gsap.timeline({ paused: true });
+        window.__timelines = window.__timelines || {};
+        window.__timelines["main-video"] = tl;
+      </script>
+    </div>
+  </body>
+</html>

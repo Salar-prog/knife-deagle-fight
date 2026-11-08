@@ -1,0 +1,231 @@
+<template id="duel-template">
+  <div data-composition-id="duel" data-width="1920" data-height="1080" data-duration="5">
+    <div class="container">
+      <!-- Opponent silhouette centered in frame -->
+      <svg class="stage" viewBox="0 0 1920 1080" preserveAspectRatio="none">
+        <rect width="1920" height="1080" fill="#08080f" />
+        <g id="duel-opponent">
+          <rect x="905" y="320" width="60" height="60" rx="10" fill="#f5f5fa" />
+          <rect x="895" y="390" width="80" height="180" rx="14" fill="#f5f5fa" />
+          <rect x="898" y="580" width="34" height="180" rx="10" fill="#f5f5fa" />
+          <rect x="938" y="580" width="34" height="180" rx="10" fill="#f5f5fa" />
+          <rect x="855" y="400" width="30" height="150" rx="10" fill="#f5f5fa" transform="rotate(18 870 410)" />
+          <rect x="985" y="400" width="30" height="150" rx="10" fill="#f5f5fa" transform="rotate(-18 1000 410)" />
+        </g>
+        <line id="duel-tracer" x1="960" y1="560" x2="960" y2="430" stroke="#ffb627" stroke-width="6" opacity="0" />
+      </svg>
+
+      <!-- Crosshair -->
+      <div class="crosshair" id="duel-crosshair">
+        <div class="ch-h"></div>
+        <div class="ch-v"></div>
+        <div class="ch-dot"></div>
+      </div>
+
+      <!-- HUD: HP bar -->
+      <div class="hud hp-wrap">
+        <div class="hud-label">HP</div>
+        <div class="hp-bar"><div class="hp-fill" id="duel-hp-fill"></div></div>
+        <div class="hp-val" id="duel-hp-val">100</div>
+      </div>
+
+      <!-- HUD: weapon status -->
+      <div class="hud weapon-wrap">
+        <span class="hud-label" id="duel-weapon-name">DEAGLE</span>
+        <span class="hud-ammo" id="duel-weapon-ammo">×12</span>
+      </div>
+
+      <!-- HUD: kill counter -->
+      <div class="hud kill-wrap">
+        <span class="hud-label">KILLS</span>
+        <span class="kc-val" id="duel-kills">1</span><span class="kc-target">/5</span>
+      </div>
+
+      <!-- Hitmarker -->
+      <div class="hitmarker" id="duel-hitmarker">✕</div>
+    </div>
+
+    <style>
+      [data-composition-id="duel"] .container {
+        width: 100%;
+        height: 100%;
+        background: #08080f;
+        position: relative;
+        font-family: "Space Grotesk", sans-serif;
+        overflow: hidden;
+      }
+
+      [data-composition-id="duel"] .stage {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      [data-composition-id="duel"] .crosshair {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 120px;
+        height: 120px;
+        margin-left: -60px;
+        margin-top: -60px;
+        opacity: 0;
+      }
+
+      [data-composition-id="duel"] .ch-h,
+      [data-composition-id="duel"] .ch-v {
+        position: absolute;
+        background: #f5f5fa;
+      }
+
+      [data-composition-id="duel"] .ch-h {
+        top: 50%;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        margin-top: -1.5px;
+      }
+
+      [data-composition-id="duel"] .ch-v {
+        left: 50%;
+        top: 0;
+        width: 3px;
+        height: 100%;
+        margin-left: -1.5px;
+      }
+
+      [data-composition-id="duel"] .ch-dot {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 10px;
+        height: 10px;
+        margin-left: -5px;
+        margin-top: -5px;
+        background: #ff2e4d;
+        border-radius: 50%;
+      }
+
+      [data-composition-id="duel"] .hud {
+        position: absolute;
+        color: #f5f5fa;
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      [data-composition-id="duel"] .hp-wrap {
+        bottom: 120px;
+        left: 100px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+
+      [data-composition-id="duel"] .hud-label {
+        font-size: 34px;
+        font-weight: 700;
+        letter-spacing: 2px;
+      }
+
+      [data-composition-id="duel"] .hp-bar {
+        width: 480px;
+        height: 28px;
+        background: #25253d;
+        border: 2px solid #3a3a55;
+      }
+
+      [data-composition-id="duel"] .hp-fill {
+        width: 100%;
+        height: 100%;
+        background: #2ecc71;
+      }
+
+      [data-composition-id="duel"] .hp-val {
+        font-size: 40px;
+        font-weight: 700;
+      }
+
+      [data-composition-id="duel"] .weapon-wrap {
+        bottom: 120px;
+        right: 100px;
+        display: flex;
+        align-items: baseline;
+        gap: 16px;
+      }
+
+      [data-composition-id="duel"] .hud-ammo {
+        font-size: 44px;
+        font-weight: 700;
+      }
+
+      [data-composition-id="duel"] .kill-wrap {
+        top: 80px;
+        right: 100px;
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+      }
+
+      [data-composition-id="duel"] .kc-val {
+        font-size: 56px;
+        font-weight: 700;
+        color: #ff2e4d;
+      }
+
+      [data-composition-id="duel"] .kc-target {
+        font-size: 34px;
+        color: #9999b0;
+      }
+
+      [data-composition-id="duel"] .hitmarker {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 110px;
+        color: #ff2e4d;
+        opacity: 0;
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+        const tl = gsap.timeline({ paused: true });
+
+        // HUD settles in
+        tl.fromTo('[data-composition-id="duel"] .hud', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", stagger: 0.1 }, 0.1);
+        tl.fromTo('[data-composition-id="duel"] #duel-crosshair', { opacity: 0, scale: 2 }, { opacity: 1, scale: 1, duration: 0.25, ease: "power4.out" }, 0.2);
+        tl.fromTo('[data-composition-id="duel"] #duel-opponent', { opacity: 0 }, { opacity: 1, duration: 0.4 }, 0.2);
+
+        // Deagle shot at 1.6s: tracer + HP 100 → 50, ammo ×12 → ×11, hitmarker pops
+        tl.fromTo('[data-composition-id="duel"] #duel-tracer', { opacity: 0 }, { opacity: 1, duration: 0.08 }, 1.6);
+        tl.to('[data-composition-id="duel"] #duel-tracer', { opacity: 0, duration: 0.25 }, 1.75);
+        tl.fromTo('[data-composition-id="duel"] #duel-hitmarker', { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.08 }, 1.7);
+        tl.to('[data-composition-id="duel"] #duel-hitmarker', { opacity: 0, duration: 0.2 }, 1.95);
+        tl.to('[data-composition-id="duel"] #duel-hp-fill', { width: "50%", duration: 0.25, ease: "power2.out" }, 1.7);
+        // HP value and ammo swap via textContent timeline call — timeline-only mutations are seekable
+        tl.call(() => { document.querySelector('[data-composition-id="duel"] #duel-hp-val').textContent = '50'; }, null, 1.95);
+        tl.call(() => { document.querySelector('[data-composition-id="duel"] #duel-weapon-ammo').textContent = '×11'; }, null, 1.95);
+
+        // Knife swap at 2.8s → arc 3.2s: HP 50 → 15, ammo → KNIFE ∞
+        tl.call(() => {
+          document.querySelector('[data-composition-id="duel"] #duel-weapon-name').textContent = 'KNIFE';
+          document.querySelector('[data-composition-id="duel"] #duel-weapon-ammo').textContent = '∞';
+        }, null, 2.8);
+        tl.to('[data-composition-id="duel"] #duel-tracer', { opacity: 1, duration: 0.2 }, 3.2);
+        tl.to('[data-composition-id="duel"] #duel-tracer', { opacity: 0, duration: 0.4 }, 3.5);
+        tl.to('[data-composition-id="duel"] #duel-hp-fill', { width: "15%", duration: 0.25, ease: "power2.out" }, 3.2);
+        tl.call(() => { document.querySelector('[data-composition-id="duel"] #duel-hp-val').textContent = '15'; }, null, 3.45);
+        tl.to('[data-composition-id="duel"] #duel-hitmarker', { opacity: 1, scale: 1, duration: 0.08 }, 3.3);
+        tl.to('[data-composition-id="duel"] #duel-hitmarker', { opacity: 0, duration: 0.2 }, 3.55);
+
+        // Hold, then kill counter ticks to 2 and everything stays for the cut
+        tl.call(() => { document.querySelector('[data-composition-id="duel"] #duel-kills').textContent = '2'; }, null, 4.2);
+        tl.to('[data-composition-id="duel"] .hud', { opacity: 0, duration: 0.3, ease: "power2.in" }, 4.6);
+
+        window.__timelines = window.__timelines || {};
+        window.__timelines["duel"] = tl;
+      })();
+    </script>
+  </div>
+</template>

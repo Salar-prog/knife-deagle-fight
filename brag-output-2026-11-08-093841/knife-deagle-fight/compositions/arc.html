@@ -1,0 +1,77 @@
+<template id="arc-template">
+  <div data-composition-id="arc" data-width="1920" data-height="1080" data-duration="4">
+    <div class="container">
+      <svg class="stage" viewBox="0 0 1920 1080" preserveAspectRatio="none">
+        <defs>
+          <radialGradient id="arc-ground" cx="50%" cy="50%" r="55%">
+            <stop offset="0%" stop-color="#1a1a2d" />
+            <stop offset="100%" stop-color="#08080f" />
+          </radialGradient>
+        </defs>
+        <rect width="1920" height="1080" fill="url(#arc-ground)" />
+        <!-- Fighter silhouette (low-poly humanoid from primitive boxes) -->
+        <g id="arc-fighter">
+          <rect x="905" y="330" width="60" height="60" rx="10" fill="#f5f5fa" />
+          <rect x="895" y="400" width="80" height="180" rx="14" fill="#f5f5fa" />
+          <rect x="898" y="590" width="34" height="180" rx="10" fill="#f5f5fa" />
+          <rect x="938" y="590" width="34" height="180" rx="10" fill="#f5f5fa" />
+          <rect x="855" y="410" width="30" height="150" rx="10" fill="#f5f5fa" transform="rotate(18 870 420)" />
+          <rect x="985" y="410" width="30" height="150" rx="10" fill="#f5f5fa" transform="rotate(-18 1000 420)" />
+        </g>
+        <!-- 120° frontal arc (white, sweep) -->
+        <g id="arc-sweep">
+          <path id="arc-wedge" d="M960,540 L622,345 A390,390 0 0 1 1298,345 Z" fill="rgba(245,245,250,0.25)" stroke="#f5f5fa" stroke-width="5" />
+          <line x1="960" y1="540" x2="960" y2="150" stroke="#f5f5fa" stroke-width="8" />
+        </g>
+      </svg>
+      <div class="arc-caption" id="arc-caption">120°. 2.1 METERS. NO AMMO.</div>
+    </div>
+
+    <style>
+      [data-composition-id="arc"] .container {
+        width: 100%;
+        height: 100%;
+        background: #08080f;
+        position: relative;
+        font-family: "Space Grotesk", sans-serif;
+        overflow: hidden;
+      }
+
+      [data-composition-id="arc"] .stage {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      [data-composition-id="arc"] .arc-caption {
+        position: absolute;
+        bottom: 10%;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 78px;
+        font-weight: 700;
+        letter-spacing: 4px;
+        color: #f5f5fa;
+        opacity: 0;
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+        const tl = gsap.timeline({ paused: true });
+
+        // Silhouette fades in, arc wedge sweeps around it
+        tl.fromTo('[data-composition-id="arc"] #arc-fighter', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 0.1);
+        tl.fromTo('[data-composition-id="arc"] #arc-sweep', { opacity: 0, rotation: -40, transformOrigin: "960px 540px" }, { opacity: 1, rotation: 40, duration: 1.1, ease: "power2.inOut" }, 0.5);
+        tl.to('[data-composition-id="arc"] #arc-sweep', { opacity: 0, duration: 0.4, ease: "power2.in" }, 2.2);
+        tl.fromTo('[data-composition-id="arc"] #arc-caption', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 1.5);
+        tl.to('[data-composition-id="arc"] #arc-caption', { opacity: 0, duration: 0.3, ease: "power2.in" }, 3.7);
+        tl.to('[data-composition-id="arc"] #arc-fighter', { opacity: 0, duration: 0.3, ease: "power2.in" }, 3.5);
+
+        window.__timelines = window.__timelines || {};
+        window.__timelines["arc"] = tl;
+      })();
+    </script>
+  </div>
+</template>

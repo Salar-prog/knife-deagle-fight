@@ -1,0 +1,82 @@
+<template id="arena-template">
+  <div data-composition-id="arena" data-width="1920" data-height="1080" data-duration="5">
+    <div class="container">
+      <svg class="stage" id="arena-svg" viewBox="0 220 1920 1080">
+        <g id="arena-board">
+          <!-- Flat-shaded arena: plateau, bowl, kicker, spine, heal zone -->
+          <rect x="660" y="330" width="600" height="420" fill="#25253d" />
+          <polygon points="660,330 735,285 730,195 660,250" fill="#1a1a2d" />
+          <rect x="830" y="430" width="260" height="140" fill="#3a3a55" />
+          <circle cx="1500" cy="390" r="120" fill="#1a1a2d" />
+          <circle cx="1500" cy="390" r="70" fill="#25253d" />
+          <polygon points="460,760 700,640 760,700 520,820" fill="#3a3a55" />
+          <rect x="340" y="500" width="220" height="50" fill="#1a1a2d" />
+          <circle id="arena-heal" cx="960" cy="900" r="110" fill="#2ecc71" opacity="0.85" />
+          <text x="960" y="915" text-anchor="middle" font-size="30" fill="#08080f" font-family="JetBrains Mono, monospace" font-weight="700">HEAL</text>
+          <rect x="60" y="60" width="1800" height="20" fill="#3a3a55" />
+          <rect x="60" y="1000" width="1800" height="20" fill="#3a3a55" />
+          <rect x="60" y="60" width="20" height="960" fill="#3a3a55" />
+          <rect x="1840" y="60" width="20" height="960" fill="#3a3a55" />
+        </g>
+        <g id="arena-labels" font-family="JetBrains Mono, monospace" font-size="40" font-weight="700" paint-order="stroke" stroke="#08080f" stroke-width="6">
+          <text x="960" y="380" text-anchor="middle" fill="#f5f5fa">PLATEAU</text>
+          <text x="1500" y="400" text-anchor="middle" fill="#f5f5fa">BOWL</text>
+          <text x="450" y="480" text-anchor="middle" fill="#00e5ff">KICKER</text>
+        </g>
+      </svg>
+      <div class="arena-caption">100×100 M. ONE ARENA.</div>
+    </div>
+
+    <style>
+      [data-composition-id="arena"] .container {
+        width: 100%;
+        height: 100%;
+        background: #08080f;
+        position: relative;
+        font-family: "Space Grotesk", sans-serif;
+        overflow: hidden;
+      }
+
+      [data-composition-id="arena"] .stage {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      [data-composition-id="arena"] .arena-caption {
+        position: absolute;
+        bottom: 8%;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 84px;
+        font-weight: 700;
+        letter-spacing: 5px;
+        color: #f5f5fa;
+        opacity: 0;
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+        const tl = gsap.timeline({ paused: true });
+
+        // Camera pans across the board south→north by moving the viewBox (no group transform)
+        tl.to('[data-composition-id="arena"] #arena-svg', {
+          attr: { viewBox: '0 480 1920 1080' },
+          duration: 4.0,
+          ease: "power1.inOut",
+        }, 0.1);
+        // Labels tick in as their area enters frame
+        tl.fromTo('[data-composition-id="arena"] #arena-labels text', { opacity: 0 }, { opacity: 1, duration: 0.3, stagger: 0.6 }, 0.6);
+        tl.fromTo('[data-composition-id="arena"] #arena-heal', { opacity: 0 }, { opacity: 0.85, duration: 0.5 }, 3.6);
+        // Caption lands
+        tl.fromTo('[data-composition-id="arena"] .arena-caption', { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 2.6);
+        tl.to('[data-composition-id="arena"] .arena-caption', { opacity: 0, duration: 0.4, ease: "power2.in" }, 4.6);
+
+        window.__timelines = window.__timelines || {};
+        window.__timelines["arena"] = tl;
+      })();
+    </script>
+  </div>
+</template>

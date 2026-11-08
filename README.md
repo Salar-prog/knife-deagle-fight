@@ -9,6 +9,16 @@ A browser-based multiplayer on-foot knife + Deagle arena duel, forked from
 Everything except the vehicle layer and race mode is REDLINE's: arena,
 matcap rendering, Cannon physics, Socket.IO relay, pickups, respawn flow.
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-FF2E4D.svg)](LICENSE)
+![Three.js](https://img.shields.io/badge/Three.js-r164-000000?logo=three.js&logoColor=white)
+![Socket.IO](https://img.shields.io/badge/Socket.IO-4.7-010101?logo=socket.io&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-5.2-646CFF?logo=vite&logoColor=white)
+![Node](https://img.shields.io/badge/Node-%E2%89%A518-339933?logo=node.js&logoColor=white)
+
+[![Launch video](docs/assets/brag.jpg)](docs/assets/brag.mp4)
+
+![Knife Deagle Fight — launch GIF](docs/assets/brag.gif)
+
 ---
 
 ## Overview
@@ -27,7 +37,7 @@ The client renders matcap-shaded low-poly environments in Three.js. The server i
 | Build | [Vite](https://vitejs.dev/) with [vite-plugin-glsl](https://github.com/UstymUkhman/vite-plugin-glsl) |
 | Animation | [GSAP](https://gsap.com/) |
 | Audio | [Howler.js](https://howlerjs.com/) |
-| Reverse proxy | [Caddy](https://caddyserver.com/) (production) |
+| Reverse proxy | nginx example in `deploy/` (production) |
 
 ## Quick start
 
@@ -146,6 +156,23 @@ This repo is a fork of [REDLINE](https://github.com/victorgalvez56/redline). The
 git fetch upstream
 ```
 
+## Deployment
+
+**Docker (single image, client + server on :3001):**
+
+```bash
+docker run -p 3001:3001 ghcr.io/salar-prog/knife-deagle-fight:latest
+```
+
+Images are built and published to GHCR by [`.github/workflows/docker.yml`](.github/workflows/docker.yml)
+on every push to `main` / `knife-deagle-fight-dev` and on `v*` tags.
+
+**systemd / nginx:** examples live in [`deploy/`](deploy/):
+[`deploy/systemd/knife-deagle-fight.service`](deploy/systemd/knife-deagle-fight.service) (runs the
+Node server as a non-root unit, which serves `client/dist` itself) and
+[`deploy/nginx.conf`](deploy/nginx.conf) (WebSocket upgrade headers for `/socket.io/`).
+
+---
 ## Contributing
 
 PRs welcome. The repo is small enough to read top-to-bottom in an afternoon.

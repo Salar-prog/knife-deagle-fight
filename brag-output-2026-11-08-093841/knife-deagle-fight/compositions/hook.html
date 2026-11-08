@@ -1,0 +1,144 @@
+<template id="hook-template">
+  <div data-composition-id="hook" data-width="1920" data-height="1080" data-duration="3">
+    <div class="container">
+      <div class="crosshair" id="hook-crosshair">
+        <div class="ch-h"></div>
+        <div class="ch-v"></div>
+        <div class="ch-dot"></div>
+      </div>
+      <div class="dmg-wrap" id="hook-dmg-wrap">
+        <span class="dmg-num" id="hook-dmg">100</span>
+        <span class="dmg-arrow">→</span>
+        <span class="dmg-num" id="hook-dmg2">50</span>
+        <span class="dmg-arrow">→</span>
+        <span class="dmg-num dmg-final" id="hook-dmg3">0</span>
+      </div>
+      <div class="hook-line" id="hook-line">TWO HITS.</div>
+    </div>
+
+    <style>
+      [data-composition-id="hook"] .container {
+        width: 100%;
+        height: 100%;
+        background: #08080f;
+        position: relative;
+        font-family: "Space Grotesk", sans-serif;
+        overflow: hidden;
+      }
+
+      [data-composition-id="hook"] .crosshair {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 220px;
+        height: 220px;
+        /* center via transform on child below; keep class'd element in place */
+        margin-left: -110px;
+        margin-top: -110px;
+        opacity: 1;
+      }
+
+      [data-composition-id="hook"] .ch-h,
+      [data-composition-id="hook"] .ch-v {
+        position: absolute;
+        background: #f5f5fa;
+      }
+
+      [data-composition-id="hook"] .ch-h {
+        top: 50%;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        margin-top: -2px;
+      }
+
+      [data-composition-id="hook"] .ch-v {
+        left: 50%;
+        top: 0;
+        width: 4px;
+        height: 100%;
+        margin-left: -2px;
+      }
+
+      [data-composition-id="hook"] .ch-dot {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 14px;
+        height: 14px;
+        margin-left: -7px;
+        margin-top: -7px;
+        background: #ff2e4d;
+        border-radius: 50%;
+      }
+
+      [data-composition-id="hook"] .dmg-wrap {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        align-items: baseline;
+        gap: 28px;
+        font-family: "JetBrains Mono", monospace;
+        opacity: 0;
+      }
+
+      [data-composition-id="hook"] .dmg-num {
+        font-size: 150px;
+        font-weight: 700;
+        color: #f5f5fa;
+        min-width: 330px;
+        text-align: center;
+      }
+
+      [data-composition-id="hook"] .dmg-arrow {
+        font-size: 90px;
+        color: #ff2e4d;
+      }
+
+      [data-composition-id="hook"] .dmg-final {
+        color: #ff2e4d;
+      }
+
+      [data-composition-id="hook"] .hook-line {
+        position: absolute;
+        top: auto;
+        bottom: 12%;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 92px;
+        font-weight: 700;
+        letter-spacing: 6px;
+        color: #f5f5fa;
+        opacity: 0;
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+        const tl = gsap.timeline({ paused: true });
+
+        tl.fromTo(
+          '[data-composition-id="hook"] #hook-crosshair',
+          { scale: 3 },
+          { scale: 1, duration: 0.25, ease: "power4.out" },
+          0,
+        );
+        // Shot crack: numbers snap in sequence
+        tl.fromTo('[data-composition-id="hook"] #hook-dmg', { opacity: 0, scale: 1.6 }, { opacity: 1, scale: 1, duration: 0.12, ease: "power2.out" }, 0.3);
+        tl.fromTo('[data-composition-id="hook"] #hook-dmg2', { opacity: 0, scale: 1.6 }, { opacity: 1, scale: 1, duration: 0.12, ease: "power2.out" }, 0.9);
+        tl.fromTo('[data-composition-id="hook"] #hook-dmg3', { opacity: 0, scale: 1.6 }, { opacity: 1, scale: 1, duration: 0.12, ease: "power2.out" }, 1.5);
+        // Crosshair recedes behind the numbers
+        tl.to('[data-composition-id="hook"] #hook-crosshair', { opacity: 0.15, scale: 0.8, duration: 0.3, ease: "power2.in" }, 1.8);
+        // Punchline
+        tl.fromTo('[data-composition-id="hook"] #hook-line', { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 2.0);
+        tl.to('[data-composition-id="hook"] #hook-line', { opacity: 0, duration: 0.25, ease: "power2.in" }, 2.8);
+
+        window.__timelines = window.__timelines || {};
+        window.__timelines["hook"] = tl;
+      })();
+    </script>
+  </div>
+</template>
