@@ -13,7 +13,7 @@ matcap rendering, Cannon physics, Socket.IO relay, pickups, respawn flow.
 
 ## Overview
 
-KNIFE DEAGLE FIGHT is a browser-based, real-time multiplayer on-foot arena duel: knife and Deagle, free-for-all in a dedicated 100×100 m skatepark-style arena — first to five kills wins. Ammo and health pickups, jump pads, a healing zone, and a server-driven meteor shower.
+KNIFE DEAGLE FIGHT is a browser-based, real-time multiplayer on-foot arena duel: knife and Deagle, free-for-all in a dedicated 100×100 m skatepark-style arena — first to five kills wins. Ammo and health pickups, a healing zone, and speed pads.
 
 The client renders matcap-shaded low-poly environments in Three.js. The server is authoritative for matchmaking, snapshot relay, hit attribution, and environmental hazards. Both ends share a Cannon.js physics world for predictable movement and collisions.
 
@@ -27,7 +27,6 @@ The client renders matcap-shaded low-poly environments in Three.js. The server i
 | Build | [Vite](https://vitejs.dev/) with [vite-plugin-glsl](https://github.com/UstymUkhman/vite-plugin-glsl) |
 | Animation | [GSAP](https://gsap.com/) |
 | Audio | [Howler.js](https://howlerjs.com/) |
-| Trailer pipeline | [Remotion](https://www.remotion.dev/) |
 | Reverse proxy | [Caddy](https://caddyserver.com/) (production) |
 
 ## Quick start
@@ -81,7 +80,7 @@ npm run build    # → client/dist/
 │  │  20Hz tick   │   │  60Hz physics│   │  routes inputs, broadcasts│ │
 │  └──────────────┘   └──────────────┘   └──────────────────────────┘  │
 │                     ↑                                                │
-│                     │  meteor scheduler, kill attribution            │
+│                     │  kill attribution                            │
 │                     │  ping ↔ clock-sync                             │
 └──────────────────────────────────────────────────────────────────────┘
 ```
@@ -99,28 +98,20 @@ Round-trip pings double as a clock-sync mechanism: the server returns its own `D
 │       ├── index.html
 │       ├── index.js
 │       ├── javascript/     # World, Camera, HUD, Network, EntryFlow…
-│       │   └── World/      # Track, Arena, Weapons, Meteors, HazardZones…
+│       │   └── World/      # Arena, Player, Weapons, HazardZones…
 │       ├── shaders/        # GLSL
 │       └── styles/redline.css
 │
 ├── server/                 # Socket.IO authoritative server
 │   └── src/
 │       ├── index.js        # HTTP server boot
-│       ├── GameRoom.js     # tick loop + event handlers + meteor shower
+│       ├── GameRoom.js     # tick loop + event handlers
 │       └── PhysicsWorld.js # shared with client via shared/constants.js
 │
 ├── shared/
 │   └── constants.js        # physics tuning, network rates, spawn grid
 │
-├── remotion/               # Trailer pipeline (intro + gameplay + outro)
-│   └── src/Trailer.tsx     # composition with chromatic aberration,
-│                           # synthwave grid, ken burns, scanning bar…
-│
-├── docs/                   # README assets
-│   └── preview.gif
-│
 ├── design/                 # Brand brief, palette, layout notes
-└── ecosystem.config.cjs    # PM2 config (legacy)
 ```
 
 ## Game mode
@@ -129,7 +120,7 @@ Round-trip pings double as a clock-sync mechanism: the server returns its own `D
 | --- | --- |
 | **Objective** | First to 5 kills |
 | **Arena** | 100×100 m skatepark: central plateau with 4 ramps, NE skate bowl, NW stairs deck, SE big kicker, SW spine, mixed low-poly trees, L-cover walls |
-| **Tools** | Deagle (two-hit kill) and knife melee, ammo + health pickups, healing zone (south), server-driven meteor shower (~140/min) |
+| **Tools** | Deagle (two-hit kill) and knife melee, ammo + health pickups, healing zone (south), speed pads (east/west corridors) |
 | **Kills** | Heuristic: a destruction event from a player you damaged within the last 1500 ms counts as your kill |
 
 ## Controls

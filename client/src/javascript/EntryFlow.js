@@ -7,7 +7,7 @@ const MODE_DATA = {
         icon:       '💥',
         accent:     'var(--rl-redline)',
         objective:  'First fighter to <em>5 kills</em> wins. Stay alive, hunt rivals.',
-        controls:   '<kbd>WASD</kbd> move · <kbd>SHIFT</kbd> sprint · <kbd>F</kbd> fire Deagle · <kbd>V</kbd> swing knife',
+        controls:   '<kbd>WASD</kbd> move · <kbd>SHIFT</kbd> sprint · <kbd>F</kbd> fire Deagle · <kbd>1/2</kbd> swap weapon',
         tips:       'The Deagle kills in two hits — close the distance and <em>swing the knife first</em>.',
     },
 }
