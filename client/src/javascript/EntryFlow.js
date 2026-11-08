@@ -1,23 +1,14 @@
 import gsap from 'gsap'
 
 const MODE_DATA = {
-    race: {
-        num:        '01',
-        name:       'RACE',
-        icon:       '🏁',
-        accent:     'var(--rl-cyan)',
-        objective:  'Set the fastest <em>5-lap</em> time. Sectors and curbs grade your line.',
-        controls:   '<kbd>WASD</kbd> drive · <kbd>SHIFT</kbd> boost · <kbd>X</kbd> brake · <kbd>SPACE</kbd> jump · <kbd>R</kbd> respawn',
-        tips:       'Hit boost pads. Watch sector splits. Curbs are flat — clip them. Off-track for 3s invalidates the lap.',
-    },
     combat: {
         num:        '02',
         name:       'COMBAT',
         icon:       '💥',
         accent:     'var(--rl-redline)',
-        objective:  'First driver to <em>5 kills</em> wins. Stay alive, hunt rivals.',
-        controls:   '<kbd>WASD</kbd> drive · <kbd>SHIFT</kbd> boost · <kbd>X</kbd> brake · <kbd>SPACE</kbd> jump · <kbd>F</kbd> fire · <kbd>R</kbd> respawn',
-        tips:       'Grab ammo crates and health crystals. Missiles home toward enemies. <em>Watch for meteor markers</em> on the ground — dodge or take 32 HP.',
+        objective:  'First fighter to <em>5 kills</em> wins. Stay alive, hunt rivals.',
+        controls:   '<kbd>WASD</kbd> move · <kbd>SHIFT</kbd> sprint · <kbd>F</kbd> fire Deagle · <kbd>V</kbd> swing knife',
+        tips:       'The Deagle kills in two hits — close the distance and <em>swing the knife first</em>.',
     },
 }
 
@@ -83,7 +74,7 @@ export default class EntryFlow
 
         // SHORTCUT: With Race hidden, Combat is the only mode — skip the
         // menu and onboarding entirely. Title press-key goes straight
-        // into the game, only the lobby (name/color/car) stands between.
+        // into the game, only the lobby (name/color) stands between.
         this._currentMode = 'combat'
         this._screen      = 'transitioning'
 

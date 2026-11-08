@@ -28,20 +28,6 @@ export default class Resources extends EventEmitter
             { name: 'matcapYellow', source: './models/matcaps/yellow.png', type: 'texture' },
             { name: 'matcapMetal', source: './models/matcaps/metal.png', type: 'texture' },
 
-            // Car default
-            { name: 'carDefaultChassis', source: './models/car/default/chassis.glb' },
-            { name: 'carDefaultWheel', source: './models/car/default/wheel.glb' },
-            { name: 'carDefaultBackLightsBrake', source: './models/car/default/backLightsBrake.glb' },
-            { name: 'carDefaultBackLightsReverse', source: './models/car/default/backLightsReverse.glb' },
-            { name: 'carDefaultAntena', source: './models/car/default/antena.glb' },
-
-            // Car CyberTruck
-            { name: 'carCyberTruckChassis', source: './models/car/cyberTruck/chassis.glb' },
-            { name: 'carCyberTruckWheel', source: './models/car/cyberTruck/wheel.glb' },
-            { name: 'carCyberTruckBackLightsBrake', source: './models/car/cyberTruck/backLightsBrake.glb' },
-            { name: 'carCyberTruckBackLightsReverse', source: './models/car/cyberTruck/backLightsReverse.glb' },
-            { name: 'carCyberTruckAntena', source: './models/car/cyberTruck/antena.glb' },
-
             // Tiles
             { name: 'tilesABase', source: './models/tiles/a/base.glb' },
             { name: 'tilesACollision', source: './models/tiles/a/collision.glb' },

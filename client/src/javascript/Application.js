@@ -56,7 +56,6 @@ export default class Application
     {
         this.config = {}
         this.config.debug      = window.location.hash === '#debug'
-        this.config.cyberTruck = window.location.hash === '#cybertruck'
         this.config.touch      = false
         this.config.soloMode   = false                  // multiplayer-only
         this.config.gameMode   = 'race'                 // 'race' | 'combat'
@@ -273,12 +272,10 @@ export default class Application
         if(!$screen) return
 
         const tips = [
-            'WASD to drive · SHIFT to boost',
-            'X to brake · SPACE to jump',
-            'F to fire · R if you get stuck',
-            'Race clean. Or wreck everything.',
-            'Missiles home. Don\'t waste them on walls.',
-            'Three modes. One track. Pick your lane.',
+            'WASD to move · SHIFT to sprint',
+            'Swing with the knife up close',
+            'Deagle needs two hits — F to fire',
+            'Two-hit Deagle. Swing first.',
         ]
         let tipIdx = 0
         $tip.textContent = tips[0]
