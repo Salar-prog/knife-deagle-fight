@@ -157,6 +157,32 @@ PRs welcome. The repo is small enough to read top-to-bottom in an afternoon.
 5. **No formatting-only commits** mixed with logic changes
 6. Open a PR with a short description of *why* the change matters, not just *what* it does
 
+### Branching & development workflow
+
+This repo is a GitHub fork of [victorgalvez56/redline](https://github.com/victorgalvez56/redline).
+Fork status lives at the **repo level**, so branch choice never affects it.
+
+| Branch | Role |
+|---|---|
+| `main` | Integration branch — finished, green work lands here. Pushed to `Salar-prog/knife-deagle-fight` (`origin`). |
+| `knife-deagle-fight-dev` | Active development — feature/fix branches come off it; merged into `main` when green. |
+| `upstream/*` | Local mirrors (and pushed copies) of `victorgalvez56/redline` branches — `<name>` matches the upstream branch (`upstream/main`, `upstream/vr-meta-quest`, …). |
+
+The original repo is registered as the `upstream` remote
+(`git remote add upstream https://github.com/victorgalvez56/redline.git`).
+Refresh an upstream mirror without ever touching `main` (avoid the GitHub
+"Sync fork" button, which syncs into your default branch):
+
+```bash
+git fetch upstream
+git branch -f upstream/main upstream/main
+git push origin upstream/main
+```
+
+Never do `git pull` from `upstream` into your `main` or `knife-deagle-fight-dev` branches —
+any upstream work you want is ported by inspecting `upstream/*` and applying it
+explicitly to `knife-deagle-fight-dev`, then merging that to `main`.
+
 ### Good first issues
 
 If you want to chip in but aren't sure where to start, the codebase has plenty of low-hanging fruit:
