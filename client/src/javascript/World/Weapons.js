@@ -29,7 +29,7 @@ export default class Weapons
         // Both viewmodels live in one group on the camera (camera-local forward is −Z),
         // lower-right of frame; select() toggles child visibility
         this.viewmodel = new THREE.Group()
-        this.viewmodel.position.set(0.12, -0.28, -0.55)
+        this.viewmodel.position.set(0.12, -0.28, -0.75)
         this.camera?.instance?.add(this.viewmodel)
 
         const shared = {

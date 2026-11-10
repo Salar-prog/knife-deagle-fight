@@ -114,7 +114,7 @@ export default class Camera
         this.pitch = 0.35               // slight downward tilt
         this.pitchMin = -0.2; this.pitchMax = 1.1
         this.sensitivity = 0.0023
-        this.distance = 3.6             // shoulder offset
+        this.distance = 3.0             // shoulder offset
         document.addEventListener('mousemove', (e) => {
             if (document.pointerLockElement !== this.renderer.domElement) return
             this.yaw   -= e.movementX * this.sensitivity
