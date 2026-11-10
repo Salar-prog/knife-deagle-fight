@@ -260,7 +260,11 @@ export default class World
             if(!this.player) return
             this.player.update()
             const p = this.player.position
-            this.camera.target.set(p.x, p.y, p.z + 0.6)
+            // Look point sits on the RIGHT shoulder (right = (sin yaw, −cos yaw) for
+            // forward (cos yaw, sin yaw)) so the player renders LEFT of the centered
+            // crosshair and nothing blocks its ray
+            const right = new THREE.Vector2(Math.sin(this.camera.yaw), -Math.cos(this.camera.yaw))
+            this.camera.target.set(p.x + right.x * 0.35, p.y + right.y * 0.35, p.z + 0.6)
         })
     }
 
