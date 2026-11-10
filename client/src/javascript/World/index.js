@@ -260,7 +260,7 @@ export default class World
             if(!this.player) return
             this.player.update()
             const p = this.player.position
-            this.camera.target.set(p.x, p.y, p.z + 0.85)
+            this.camera.target.set(p.x, p.y, p.z + 0.6)
         })
     }
 
