@@ -4,98 +4,160 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KNIFE DEAGLE FIGHT — Two-hit Deagle. Swing first.</title>
-  <meta name="description" content="Knife Deagle Fight — a multiplayer knife + Deagle arena duel in the browser. First to five kills." />
-  <style>
-    :root {
-      --bg: #08080f;
-      --surface: #1a1a2d;
-      --text: #f5f5fa;
-      --text-2: #9999b0;
-      --red: #ff2e4d;
-      --cyan: #00e5ff;
-      --amber: #ffb627;
-      --mono: "JetBrains Mono", monospace;
-      --disp: "Space Grotesk", system-ui, sans-serif;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--disp);
-      line-height: 1.5;
-    }
-    .wrap { max-width: 960px; margin: 0 auto; padding: 64px 24px; }
-    h1 {
-      font-size: clamp(56px, 10vw, 110px);
-      letter-spacing: 2px;
-      margin: 0 0 8px;
-      text-shadow: 4px 0 0 var(--red), -4px 0 0 var(--cyan);
-    }
-    .tagline { font-size: clamp(24px, 4vw, 38px); color: var(--text); margin: 0 0 40px; }
-    video, img.showcase { width: 100%; border-radius: 12px; border: 1px solid #3a3a55; }
-    h2 { margin-top: 56px; font-size: 28px; letter-spacing: 2px; border-bottom: 2px solid var(--red); padding-bottom: 8px; }
-    table { border-collapse: collapse; width: 100%; }
-    td, th { padding: 10px 14px; border-bottom: 1px solid #3a3a55; text-align: left; }
-    th { font-family: var(--mono); font-size: 13px; letter-spacing: 2px; color: var(--text-2); }
-    code { font-family: var(--mono); background: var(--surface); padding: 2px 8px; border-radius: 4px; }
-    pre { background: var(--surface); padding: 16px; border-radius: 8px; overflow-x: auto; }
-    a { color: var(--cyan); }
-    .badges { margin: 24px 0; }
-    .badges img { height: 20px; margin-right: 6px; }
-    footer { margin-top: 64px; color: var(--text-2); font-size: 14px; }
-  </style>
+  <meta name="description" content="Knife Deagle Fight — a multiplayer knife + Deagle arena duel in the browser. First to five kills. Three.js, Cannon.js, Socket.IO." />
+  <meta name="theme-color" content="#08080F" />
+  <link rel="icon" href="./crosshair.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./styles.css" />
+
+  <!-- Social card -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="KNIFE DEAGLE FIGHT" />
+  <meta property="og:description" content="Two-hit Deagle. Swing first. A multiplayer knife + Deagle arena duel in the browser." />
+  <meta property="og:image" content="./assets/brag.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="KNIFE DEAGLE FIGHT" />
+  <meta name="twitter:description" content="Two-hit Deagle. Swing first." />
+  <meta name="twitter:image" content="./assets/brag.jpg" />
 </head>
 <body>
-  <div class="wrap">
-    <h1>KNIFE DEAGLE FIGHT</h1>
-    <p class="tagline">Two-hit Deagle. Swing first.</p>
-
-    <div class="badges">
-      <img alt="License MIT" src="https://img.shields.io/badge/License-MIT-FF2E4D.svg" />
-      <img alt="Three.js" src="https://img.shields.io/badge/Three.js-r164-000000?logo=three.js&amp;logoColor=white" />
-      <img alt="Socket.IO" src="https://img.shields.io/badge/Socket.IO-4.7-010101?logo=socket.io&amp;logoColor=white" />
-      <img alt="Vite" src="https://img.shields.io/badge/Vite-5.2-646CFF?logo=vite&amp;logoColor=white" />
-      <img alt="Node" src="https://img.shields.io/badge/Node-%E2%89%A518-339933?logo=node.js&amp;logoColor=white" />
+  <nav class="nav">
+    <a class="nav-brand" href="#top">KNIFE DEAGLE FIGHT</a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#controls">Controls</a>
+      <a href="#run">Run</a>
+      <a href="#deploy">Deploy</a>
+      <a class="nav-cta" href="https://github.com/Salar-prog/knife-deagle-fight" target="_blank" rel="noopener">★ GitHub</a>
     </div>
+  </nav>
 
-    <video src="./assets/brag.mp4" poster="./assets/brag.jpg" autoplay muted loop playsinline></video>
-    <p><img class="showcase" src="./assets/brag.gif" alt="Launch video (GIF)" /></p>
+  <header class="hero" id="top">
+    <div class="wordmark" aria-label="KNIFE DEAGLE FIGHT">
+      <span class="wm-ghost wm-cyan" aria-hidden="true">KNIFE DEAGLE FIGHT</span>
+      <span class="wm-ghost wm-red" aria-hidden="true">KNIFE DEAGLE FIGHT</span>
+      <span class="wm-main">KNIFE DEAGLE FIGHT</span>
+    </div>
+    <p class="hero-tagline">Two-hit Deagle. Swing first.</p>
+    <div class="hero-ctas">
+      <a class="btn btn-primary" href="https://github.com/Salar-prog/knife-deagle-fight" target="_blank" rel="noopener">View source</a>
+      <a class="btn btn-ghost" href="#run">Run it locally</a>
+      <a class="btn btn-ghost" href="https://github.com/Salar-prog/knife-deagle-fight/releases" target="_blank" rel="noopener">Releases</a>
+    </div>
+    <video class="hero-video" src="./assets/brag.mp4" poster="./assets/brag.jpg" autoplay muted loop playsinline></video>
+  </header>
 
-    <h2>What is it?</h2>
-    <p>A browser-based, real-time multiplayer on-foot arena duel: knife and Deagle, free-for-all
-    in a dedicated 100×100 m skatepark-style arena. First to five kills wins. Built with
-    Three.js, Cannon.js and Socket.IO. Forked from
-    <a href="https://github.com/victorgalvez56/redline">REDLINE</a> by Victor Galvez
-    (foundation: Bruno Simon's folio-2019).</p>
+  <main>
+    <section class="section" id="features">
+      <h2>Features</h2>
+      <div class="features">
+        <article class="feature">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M2 12h20" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+          <h3>Two-hit Deagle</h3>
+          <p>50 HP a shot from 10 starting rounds — no reloads. Two hits and it's over.</p>
+        </article>
+        <article class="feature">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a10 10 0 0 1 14-9L8 21a10 10 0 0 1-4-9z" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+          <h3>Knife closer</h3>
+          <p>35 HP in a fast 120° frontal swing, 2.1 m reach, no ammo. Finish what the Deagle started.</p>
+        </article>
+        <article class="feature">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/><path d="M12 7v5l3 3" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+          <h3>First to 5</h3>
+          <p>Free-for-all in one arena. Five kills and a VICTORY overlay ends it.</p>
+        </article>
+        <article class="feature">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3" stroke="currentColor" stroke-width="2" fill="none"/><path d="M9 12h6" stroke="currentColor" stroke-width="2"/></svg>
+          <h3>Pickups</h3>
+          <p>Ammo and health crates scattered across the map to fight over.</p>
+        </article>
+        <article class="feature">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21c-4-3-7-6-7-10a7 7 0 0 1 14 0c0 4-3 7-7 10z" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+          <h3>Healing zone</h3>
+          <p>A pocket in the south that patches you back up — if you can hold it.</p>
+        </article>
+        <article class="feature">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 3 5 13h6l-2 8 8-11h-6l2-7z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>
+          <h3>Speed pads</h3>
+          <p>Boost tiles for escapes, chases and sudden flanks.</p>
+        </article>
+      </div>
+    </section>
 
-    <h2>Controls</h2>
-    <table>
-      <tr><th>ACTION</th><th>KEYS</th></tr>
-      <tr><td>Move</td><td><code>WASD</code> / arrows</td></tr>
-      <tr><td>Sprint</td><td><code>Shift</code></td></tr>
-      <tr><td>Jump</td><td><code>Space</code></td></tr>
-      <tr><td>Aim</td><td>Mouse (pointer lock)</td></tr>
-      <tr><td>Fire / slash</td><td><code>LMB</code> (alias <code>F</code>)</td></tr>
-      <tr><td>Swap weapon</td><td><code>1</code> <code>2</code> <code>Q</code> wheel</td></tr>
-      <tr><td>Chat</td><td><code>Enter</code></td></tr>
-    </table>
+    <section class="section" id="controls">
+      <h2>Controls</h2>
+      <table class="table">
+        <tr><th>ACTION</th><th>KEYS</th></tr>
+        <tr><td>Move</td><td><code>WASD</code> / arrows</td></tr>
+        <tr><td>Sprint</td><td><code>Shift</code></td></tr>
+        <tr><td>Jump</td><td><code>Space</code></td></tr>
+        <tr><td>Aim</td><td>Mouse (pointer lock)</td></tr>
+        <tr><td>Fire / slash</td><td><code>LMB</code> (alias <code>F</code>)</td></tr>
+        <tr><td>Swap weapon</td><td><code>1</code> <code>2</code> <code>Q</code> wheel</td></tr>
+        <tr><td>Chat</td><td><code>Enter</code></td></tr>
+      </table>
+    </section>
 
-    <h2>Run it</h2>
-    <pre>npm install
+    <section class="section" id="run">
+      <h2>Run it locally</h2>
+      <div class="tabs" role="tablist" aria-label="Run method">
+        <button class="tab is-active" role="tab" aria-selected="true" data-tab="npm" type="button">npm</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="docker" type="button">Docker</button>
+      </div>
+      <div class="tab-panels">
+        <pre class="panel is-active" id="panel-npm"><nocode>npm install
 npm install --prefix client
 npm install --prefix server
-npm run dev</pre>
-    <p>Server on <code>:3001</code>, client on <code>:5173</code>. Open two browser profiles to duel.</p>
+npm run dev</nocode></pre>
+        <pre class="panel" id="panel-docker"><nocode>docker run -p 3001:3001 ghcr.io/salar-prog/knife-deagle-fight:latest</nocode></pre>
+      </div>
+      <p class="note">npm: server on <code>:3001</code>, client on <code>:5173</code> — open two browser profiles to duel. Docker: single process on <code>:3001</code>.</p>
+    </section>
 
-    <h2>Docker</h2>
-    <pre>docker run -p 3001:3001 ghcr.io/salar-prog/knife-deagle-fight:latest</pre>
+    <section class="section" id="tech">
+      <h2>Tech stack</h2>
+      <table class="table">
+        <tr><th>LAYER</th><th>TECH</th></tr>
+        <tr><td>Rendering</td><td><a href="https://threejs.org/" target="_blank" rel="noopener">Three.js</a> — matcap-shaded low-poly arena</td></tr>
+        <tr><td>Physics</td><td><a href="https://github.com/schteppe/cannon.js" target="_blank" rel="noopener">Cannon.js</a> — shared client/server world, z-up</td></tr>
+        <tr><td>Netcode</td><td><a href="https://socket.io/" target="_blank" rel="noopener">Socket.IO</a> — snapshot relay + combat events</td></tr>
+        <tr><td>Build</td><td><a href="https://vitejs.dev/" target="_blank" rel="noopener">Vite</a> client, Node ≥ 18 server</td></tr>
+      </table>
+    </section>
 
-    <footer>
-      Knife Deagle Fight — MIT LICENSE. Built on REDLINE (© Victor Galvez, victorgalvez56)
-      and Bruno Simon's folio-2019. Video made with
-      <a href="https://github.com/latent-spaces/brag">/brag</a> (HyperFrames).
-    </footer>
-  </div>
+    <section class="section" id="deploy">
+      <h2>Deploy</h2>
+      <p>The Docker image serves the built client and the Socket.IO server from one Node process on <code>:3001</code>.</p>
+      <p>Self-hosting examples live in <a href="https://github.com/Salar-prog/knife-deagle-fight/tree/main/deploy" target="_blank" rel="noopener"><code>deploy/</code></a>:
+      a hardened <a href="https://github.com/Salar-prog/knife-deagle-fight/blob/main/deploy/systemd/knife-deagle-fight.service" target="_blank" rel="noopener">systemd unit</a> and an
+      <a href="https://github.com/Salar-prog/knife-deagle-fight/blob/main/deploy/nginx.conf" target="_blank" rel="noopener">nginx proxy</a> with WebSocket upgrade headers for <code>/socket.io/</code>.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>Knife Deagle Fight — MIT. Built on <a href="https://github.com/victorgalvez56/redline" target="_blank" rel="noopener">REDLINE</a>
+    (© Victor Galvez) and Bruno Simon's <a href="https://bruno-simon.com/" target="_blank" rel="noopener">folio-2019</a>.
+    Launch video made with <a href="https://github.com/latent-spaces/brag" target="_blank" rel="noopener">/brag</a> (HyperFrames).</p>
+  </footer>
+
+  <script>
+    // Tabs (npm vs docker)
+    document.querySelectorAll('.tab').forEach((tab) =>
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach((t) => {
+          const on = t === tab
+          t.classList.toggle('is-active', on)
+          t.setAttribute('aria-selected', on)
+        })
+        document.querySelectorAll('.panel').forEach((p) =>
+          p.classList.toggle('is-active', p.id === 'panel-' + tab.dataset.tab))
+      }))
+
+    // Scroll reveal (skipped if the user prefers reduced motion)
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) =>
+        entries.forEach((e) => e.isIntersecting && e.target.classList.add('in')), { threshold: 0.15 })
+      document.querySelectorAll('.feature, .section h2, .table').forEach((el) => { el.classList.add('reveal'); io.observe(el) })
+    }
+  </script>
 </body>
 </html>
